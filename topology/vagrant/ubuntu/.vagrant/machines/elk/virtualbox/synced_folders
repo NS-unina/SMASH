@@ -1,0 +1,1 @@
+{"virtualbox":{"/home/claudio/ubuntu/elk":{"guestpath":"/home/claudio/ubuntu/elk","hostpath":"/home/claudio/Honey-MTD-2/topology/vagrant/ubuntu/elk","disabled":false,"__vagrantfile":true},"/vagrant":{"guestpath":"/vagrant","hostpath":"/home/claudio/Honey-MTD-2/topology/vagrant/ubuntu","disabled":false,"__vagrantfile":true}}}

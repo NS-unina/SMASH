@@ -1,8 +1,6 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
-
 require_relative 'functions'
-
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
@@ -16,35 +14,42 @@ Vagrant.configure("2") do |config|
   # boxes at https://vagrantcloud.com/search.
   #config.vm.box = "ubuntu/trusty64"
     config.vm.provider :virtualbox
-    
-  # deploy_service(config, name, box, memory_size, host_path, port_vm, port_host, port_id, tap, mac_tap, ip_address_tap, routes,ip_address_route)
-  # deploy_honeypot(config, name, box, memory_size, host_path, port_vm, port_host, port_id, tap, mac_tap, ip_address_tap, routes,ip_address_route) 
-    deploy_service(config, "int_service", "ubuntu/focal64", "512","int_service", 22, 3200,"ssh", "tap1", "0800276dec72", "192.168.10.1", ["192.168.11.0/24", "192.168.12.0/24"],"192.168.10.1")
-    deploy_honeypot(config, "int_heralding", "ubuntu/focal64", "512","shared", 22, 3201,"ssh", "tap2", "e29157869d3f", "192.168.10.13", ["192.168.11.0/24", "192.168.12.0/24"],"192.168.10.1")
-    deploy_honeypot(config, "ext_cowrie", "ubuntu/focal64", "512","ext_cowrie", 22, 3202,"ssh", "tap3", "080027b70e58", "192.168.11.10", ["192.168.10.0/24", "192.168.12.0/24"],"192.168.11.1")
-    deploy_honeypot(config, "ext_heralding", "ubuntu/focal64", "512","ext_heralding", 22, 3204,"ssh", "tap4", "0800276df998", "192.168.11.11", ["192.168.10.0/24", "192.168.12.0/24"],"192.168.11.1")
 
     config.vm.define "elk" do |elk|
       elk.vm.box = "ubuntu/focal64"
         elk.vm.provider "virtualbox" do |elk1|
           # Customize the amount of memory on the VM:
-	    elk1.memory = "2048"
+	    elk1.memory = "4096"
 	  end
-      elk.vm.synced_folder "elk/", "/home/emma/ubuntu/elk"
+      elk.vm.synced_folder "elk/", "/home/claudio/ubuntu/elk"
       elk.vm.network :forwarded_port, guest: 22, host: 3203, id: 'ssh'
-      elk.vm.network "public_network", bridge: "tap5", mac: "080027f56b90", ip: "192.168.11.10"
+      elk.vm.network "public_network", bridge: "tap5", mac: "0800277db7b8", ip: "192.168.5.10"
+      elk.vm.network "public_network", bridge: "tap11", mac: "080027f56b90", ip: "192.168.11.10"
       
       elk.vm.provision "shell",
         run: "always",
-        inline: "ip route add 192.168.10.0/24 via 192.168.12.1 dev enp0s8"
+        inline: "ip route add 192.168.3.0/24 via 192.168.5.1 dev enp0s8"
 
       elk.vm.provision "shell",
         run: "always",
-        inline: "ip route add 192.168.11.0/24 via 192.168.12.1 dev enp0s8"
+        inline: "ip route add 192.168.4.0/24 via 192.168.5.1 dev enp0s8"
+
+      elk.vm.provision "shell",
+        run: "always",
+        inline: "ip route add 192.168.10.0/24 via 192.168.11.1 dev enp0s9"
 
       elk.vm.provision "shell", path: "./configurations/elk.sh"
       elk.vm.provision "shell", path: "./elk/start.sh"
     end
+
+    deploy_service(config, "int_service", "ubuntu/focal64", "512","int_service", 22, 3200,"ssh", "tap2", "0800276dec72", "192.168.3.11", ["192.168.4.0/24", "192.168.5.0/24", "192.168.10.0/24", "192.168.11.0/24"],"192.168.3.1")
+    deploy_honeypot(config, "int_heralding", "ubuntu/focal64", "512","shared", 22, 3201,"ssh", "tap3", "0800276c0abf", "192.168.3.12", ["192.168.4.0/24", "192.168.5.0/24", "192.168.10.0/24", "192.168.11.0/24"],"192.168.3.1")
+    deploy_honeypot(config, "ext_cowrie", "ubuntu/focal64", "1024","ext_cowrie", 22, 3202,"ssh", "tap4", "080027b70e58", "192.168.4.10", ["192.168.3.0/24", "192.168.5.0/24", "192.168.10.0/24", "192.168.11.0/24"],"192.168.4.1")
+    deploy_honeypot(config, "ext_heralding", "ubuntu/focal64", "512","ext_heralding", 22, 3204,"ssh", "tap7", "0800276df998", "192.168.4.11", ["192.168.3.0/24", "192.168.5.0/24", "192.168.10.0/24", "192.168.11.0/24"],"192.168.4.1")
+    deploy_honeypot(config, "dmz_heralding", "ubuntu/focal64", "512","dmz_heralding", 22, 3205,"ssh", "tap10", "0800272c3092", "192.168.10.10", ["192.168.3.0/24", "192.168.5.0/24", "192.168.4.0/24", "192.168.11.0/24"],"192.168.10.1")
+    deploy_honeypot(config, "dmz_cowrie", "ubuntu/focal64", "512","dmz_cowrie", 22, 3206,"ssh", "tap12", "080027b70e59", "192.168.10.13", ["192.168.3.0/24", "192.168.5.0/24", "192.168.4.0/24", "192.168.11.0/24"],"192.168.10.1")
+    deploy_service(config, "dmz_service", "ubuntu/focal64", "512","dmz_service", 22, 3207,"ssh", "tap13", "0800276dec74", "192.168.10.14", ["192.168.4.0/24", "192.168.5.0/24", "192.168.3.0/24", "192.168.11.0/24"],"192.168.10.1")
+
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
