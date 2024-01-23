@@ -1,22 +1,17 @@
 FROM python:3.8-slim-buster as base
 
-# Aggiorna il sistema e installa le dipendenze
+COPY . .
 RUN apt-get update \
     && apt-get install -y libpq-dev gcc libssl-dev \
     && apt-get clean \
     && pip install --user --no-cache-dir -r requirements.txt
-
+    
 # Installa una versione più recente di OpenSSL
-RUN apt-get install -y libssl1.1
 
-COPY . .
 RUN python setup.py install --user
 
-FROM python:3.8-slim-stretch
-
-# Copia solo i file necessari dalla build precedente
+FROM python:3.8-slim-buster
 COPY --from=base /root/.local /root/.local
-COPY --from=base /usr/lib/x86_64-linux-gnu/libssl.so.1.1 /usr/lib/x86_64-linux-gnu/
 
 ENV PATH=/root/.local/bin:$PATH
 

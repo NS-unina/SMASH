@@ -1,1 +1,0 @@
-{"virtualbox":{"/home/claudio/ubuntu/dmz_heralding":{"guestpath":"/home/claudio/ubuntu/dmz_heralding","hostpath":"/home/claudio/Honey-MTD-2/topology/vagrant/ubuntu/dmz_heralding","disabled":false,"__vagrantfile":true},"/vagrant":{"guestpath":"/vagrant","hostpath":"/home/claudio/Honey-MTD-2/topology/vagrant/ubuntu","disabled":false,"__vagrantfile":true}}}
