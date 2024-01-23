@@ -1,0 +1,1 @@
+{"virtualbox":{"/home/claudio/ubuntu/shared":{"guestpath":"/home/claudio/ubuntu/shared","hostpath":"/home/claudio/Honey-MTD-2/topology3/vagrant/ubuntu/shared","disabled":false,"__vagrantfile":true},"/vagrant":{"guestpath":"/vagrant","hostpath":"/home/claudio/Honey-MTD-2/topology3/vagrant/ubuntu","disabled":false,"__vagrantfile":true}}}
