@@ -49,7 +49,8 @@ Vagrant.configure("2") do |config|
     deploy_honeypot(config, "dmz_heralding", "ubuntu/focal64", "512","dmz_heralding", 22, 3205,"ssh", "tap10", "0800272c3092", "10.1.10.10", ["10.1.3.0/24", "10.1.5.0/24", "10.1.4.0/24", "10.1.11.0/24"],"10.1.10.1")
     deploy_honeypot(config, "dmz_cowrie", "ubuntu/focal64", "512","dmz_cowrie", 22, 3206,"ssh", "tap12", "080027b70e59", "10.1.10.13", ["10.1.3.0/24", "10.1.5.0/24", "10.1.4.0/24", "10.1.11.0/24"],"10.1.10.1")
     deploy_service(config, "dmz_service", "ubuntu/focal64", "512","dmz_service", 22, 3207,"ssh", "tap13", "0800276dec74", "10.1.10.14", ["10.1.4.0/24", "10.1.5.0/24", "10.1.3.0/24", "10.1.11.0/24"],"10.1.10.1")
-
+    deploy_honeypot2(config, "int_heralding_53529b", "ubuntu/focal64", "512","shared", 22, 3209,"ssh", "tap_86e68568-52", "08002735a3cd", "10.1.3.18", ["10.1.4.0/24", "10.1.5.0/24", "10.1.10.0/24", "10.1.11.0/24"],"10.1.3.1")
+  # INSERISCI NUOVO CODICE PRIMA DI QUESTO COMMENTO
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.

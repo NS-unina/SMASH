@@ -1,0 +1,1 @@
+{"virtualbox":{"/home/claudio/ubuntu/ext_heralding":{"guestpath":"/home/claudio/ubuntu/ext_heralding","hostpath":"/home/claudio/Honey-MTD-2/topology/lan1/vagrant/ubuntu/ext_heralding","disabled":false,"__vagrantfile":true},"/vagrant":{"guestpath":"/vagrant","hostpath":"/home/claudio/Honey-MTD-2/topology/lan1/vagrant/ubuntu","disabled":false,"__vagrantfile":true}}}

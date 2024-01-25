@@ -81,4 +81,8 @@ sudo iptables -t nat -A POSTROUTING -o patch4 -j MASQUERADE
 sudo iptables -t nat -A POSTROUTING -o patch5 -j MASQUERADE
 sudo iptables -t nat -A POSTROUTING -o patch6 -j MASQUERADE
 sudo iptables -t nat -A POSTROUTING -o patch7 -j MASQUERADE
+sudo iptables -t nat -A POSTROUTING -o patch10 -j MASQUERADE
+sudo iptables -t nat -A POSTROUTING -o patch11 -j MASQUERADE
+sudo iptables -t nat -A POSTROUTING -o patch12 -j MASQUERADE
+sudo iptables -t nat -A POSTROUTING -o patch13 -j MASQUERADE
 
