@@ -35,7 +35,7 @@ config_string="    deploy_honeypot2(config, \"$vm_name\", \"ubuntu/focal64\", \"
 topology_string="$vm_name\ = Honeypot(\"$vm_name\", \"$ip_address\", \"$mac_tap\", \"$tap_ofport\", '255.255.255.0')"
 echo $topology_string
 
-sed -i "/# INSERISCI NUOVO CODICE PRIMA DI QUESTO COMMENTO/i\\
+sed -i "/# HONEYPOT FARM/a\\
 ${config_string}" Vagrantfile
 
 sed -i "/${comment}/a ${topology_string}" "${python_file}"
