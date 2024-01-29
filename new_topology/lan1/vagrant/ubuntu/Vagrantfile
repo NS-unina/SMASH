@@ -1,0 +1,126 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+require_relative 'functions'
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure("2") do |config|
+  # The most common configuration options are documented and commented below.
+  # For a complete reference, please see the online documentation at
+  # https://docs.vagrantup.com.
+
+  # Every Vagrant development environment requires a box. You can search for
+  # boxes at https://vagrantcloud.com/search.
+  #config.vm.box = "ubuntu/trusty64"
+    config.vm.provider :virtualbox
+
+    config.vm.define "elk" do |elk|
+      elk.vm.box = "ubuntu/focal64"
+        elk.vm.provider "virtualbox" do |elk1|
+          # Customize the amount of memory on the VM:
+	    elk1.memory = "4096"
+	  end
+      elk.vm.synced_folder "elk/", "/home/claudio/ubuntu/elk"
+      elk.vm.network :forwarded_port, guest: 22, host: 3203, id: 'ssh'
+      elk.vm.network "public_network", bridge: "tap5", mac: "0800277db7b8", ip: "10.1.5.10"
+      elk.vm.network "public_network", bridge: "tap11", mac: "080027f56b90", ip: "10.1.11.10"
+      
+      elk.vm.provision "shell",
+        run: "always",
+        inline: "ip route add 10.1.3.0/24 via 10.1.5.1 dev enp0s8"
+
+      elk.vm.provision "shell",
+        run: "always",
+        inline: "ip route add 10.1.4.0/24 via 10.1.5.1 dev enp0s8"
+
+      elk.vm.provision "shell",
+        run: "always",
+        inline: "ip route add 10.1.10.0/24 via 10.1.11.1 dev enp0s9"
+
+      elk.vm.provision "shell", path: "./configurations/elk.sh"
+      elk.vm.provision "shell", path: "./elk/start.sh"
+    end
+
+    deploy_service(config, "int_service", "ubuntu/focal64", "512","int_service", 22, 3200,"ssh", "tap2", "0800276dec72", "10.1.3.11", ["10.1.4.0/24", "10.1.5.0/24", "10.1.10.0/24", "10.1.11.0/24"],"10.1.3.1")
+    deploy_honeypot(config, "int_heralding", "ubuntu/focal64", "512","shared", 22, 3201,"ssh", "tap3", "0800276c0abf", "10.1.3.12", ["10.1.4.0/24", "10.1.5.0/24", "10.1.10.0/24", "10.1.11.0/24"],"10.1.3.1")
+    deploy_honeypot(config, "ext_cowrie", "ubuntu/focal64", "1024","ext_cowrie", 22, 3202,"ssh", "tap4", "080027b70e58", "10.1.4.10", ["10.1.3.0/24", "10.1.5.0/24", "10.1.10.0/24", "10.1.11.0/24"],"10.1.4.1")
+    deploy_honeypot(config, "ext_heralding", "ubuntu/focal64", "512","ext_heralding", 22, 3204,"ssh", "tap7", "0800276df998", "10.1.4.11", ["10.1.3.0/24", "10.1.5.0/24", "10.1.10.0/24", "10.1.11.0/24"],"10.1.4.1")
+    deploy_honeypot(config, "dmz_heralding", "ubuntu/focal64", "512","dmz_heralding", 22, 3205,"ssh", "tap10", "0800272c3092", "10.1.10.10", ["10.1.3.0/24", "10.1.5.0/24", "10.1.4.0/24", "10.1.11.0/24"],"10.1.10.1")
+    deploy_honeypot(config, "dmz_cowrie", "ubuntu/focal64", "512","dmz_cowrie", 22, 3206,"ssh", "tap12", "080027b70e59", "10.1.10.13", ["10.1.3.0/24", "10.1.5.0/24", "10.1.4.0/24", "10.1.11.0/24"],"10.1.10.1")
+    deploy_service(config, "dmz_service", "ubuntu/focal64", "512","dmz_service", 22, 3207,"ssh", "tap13", "0800276dec74", "10.1.10.14", ["10.1.4.0/24", "10.1.5.0/24", "10.1.3.0/24", "10.1.11.0/24"],"10.1.10.1")
+  # HONEYPOT FARM
+    deploy_honeypot2(config, "int_heralding_1e3a03", "ubuntu/focal64", "512","shared", 22, 3209,"ssh", "tap_2ce6210f-33", "080027a2b2ef", "10.1.3.2", ["10.1.4.0/24", "10.1.5.0/24", "10.1.10.0/24", "10.1.11.0/24"],"10.1.3.1")
+    deploy_honeypot2(config, "int_heralding_fddc90", "ubuntu/focal64", "512","shared", 22, 3209,"ssh", "tap_07586eb6-1b", "08002780d1e5", "10.1.3.2", ["10.1.4.0/24", "10.1.5.0/24", "10.1.10.0/24", "10.1.11.0/24"],"10.1.3.1")
+  # Disable automatic box update checking. If you disable this, then
+  # boxes will only be checked for updates when the user runs
+  # `vagrant box outdated`. This is not recommended.
+  # config.vm.box_check_update = false
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine. In the example below,
+  # accessing "localhost:8080" will access port 80 on the guest machine.
+  # NOTE: This will enable public access to the opened port
+  # config.vm.network "forwarded_port", guest: 80, host: 8080
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine and only allow access
+  # via 127.0.0.1 to disable public access
+  # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+
+  # Create a private network, which allows host-only access to the machine
+  # using a specific IP.
+  # config.vm.network "private_network", ip: "10.1.33.10"
+
+  # Create a public network, which generally matched to bridged network.
+  # Bridged networks make the machine appear as another physical device on
+  # your network.
+  # config.vm.network "public_network"
+  #  config.vm.network "public_network", auto_config: false 
+  #  uno.vm.network "public_network", bridge: "tap1", ip: "10.1.3.10"
+  #  due.vm.network "public_network", bridge: "tap2", ip: "10.1.3.11"
+
+  #  uno.vm.provision "shell",
+  #    run: "always",
+  #    inline: "ip route add 10.1.4.0/24 via 10.1.3.1 dev eth1"
+
+  #  uno.vm.provision "shell",
+  #    run: "always",
+  #    inline: "ip route add 10.1.5.0/24 via 10.1.3.1 dev eth1"
+
+  #  uno.vm.provision "shell",
+  #    run: "always",
+  #    inline: "ip route add 10.1.10.0/24 via 10.1.3.1 dev eth1"
+
+  #  uno.vm.provision "shell",
+  #    run: "always",
+  #    inline: "ip route add 10.1.11.0/24 via 10.1.3.1 dev eth1"
+  # Share an additional folder to the guest VM. The first argument is
+  # the path on the host to the actual folder. The second argument is
+  # the path on the guest to mount the folder. And the optional third
+  # argument is a set of non-required options.
+  # config.vm.synced_folder "../data", "/vagrant_data"
+
+  # Provider-specific configuration so you can fine-tune various
+  # backing providers for Vagrant. These expose provider-specific options.
+  # Example for VirtualBox:
+  #
+  # config.vm.provider "virtualbox" do |vb|
+  #   # Display the VirtualBox GUI when booting the machine
+  #   vb.gui = true
+  #
+  #   # Customize the amount of memory on the VM:
+  #   vb.memory = "1024"
+  # end
+  #
+  # View the documentation for the provider you are using for more
+  # information on available options.
+
+  # Enable provisioning with a shell script. Additional provisioners such as
+  # Ansible, Chef, Docker, Puppet and Salt are also available. Please see the
+  # documentation for more information about their specific syntax and use.
+  # config.vm.provision "shell", inline: <<-SHELL
+  #   apt-get update
+  #   apt-get install -y apache2
+  # SHELL
+end

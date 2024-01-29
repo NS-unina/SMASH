@@ -3,6 +3,8 @@ from network import Host, Honeypot, Attacker, Subnet, Network, Gateway
 #------- NETWORK TOPOLPOGY LAN1 -------------------------------------------------------------- #    
 # Nodes
 #Subnet 1
+int_heralding_1e3a03 = Honeypot("int_heralding_1e3a03", "10.1.3.2", "080027a2b2ef", "11", '255.255.255.0')
+int_heralding_fddc90 = Honeypot("int_heralding_fddc90", "10.1.3.2", "08002780d1e5", "10", '255.255.255.0')
 host = Host('host', '10.1.3.10', '08:00:27:b6:d0:66', 15, '255.255.255.0')
 service = Host('service', '10.1.3.11', '08:00:27:6d:ec:62', 3, '255.255.255.0')
 ssh_service = Host('ssh_service', '10.1.3.13', '08:00:27:b6:d0:69', 16, '255.255.255.0')
