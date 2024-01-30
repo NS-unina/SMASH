@@ -87,3 +87,40 @@ find_free_ip2() {
   exit 1
 }
 
+find_free_ip3() {
+    local subnet="$1"
+    local occupied_file="$2"
+    local ip_list=()
+
+    # Carica gli indirizzi IP occupati dal file
+    if [ -e "$occupied_file" ]; then
+        readarray -t ip_list < "$occupied_file"
+    fi
+
+    # Cerca un indirizzo IP libero
+    for i in {2..254}; do
+        local ip="${subnet%.*}.${i}"
+        if [[ ! " ${ip_list[@]} " =~ " ${ip} " ]]; then
+            echo "$ip"
+            return
+        fi
+    done
+}
+
+find_free_port() {
+    local occupied_file="$1"
+    local port_list=()
+
+    # Carica i numeri di porta occupati dal file
+    if [ -e "$occupied_file" ]; then
+        readarray -t port_list < "$occupied_file"
+    fi
+
+    # Cerca un numero di porta libero
+    for port in {3200..4000}; do
+        if [[ ! " ${port_list[@]} " =~ " ${port} " ]]; then
+            echo "$port"
+            return
+        fi
+    done
+}
