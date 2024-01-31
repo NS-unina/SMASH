@@ -5,8 +5,8 @@ subnet=$1
 subnet1="10.1.3.0/24"
 subnet2="10.1.4.0/24"
 
-occupied_ips="occupied_ips"
-occupied_ports="occupied_ports"
+occupied_ips="/home/claudio/Honey-MTD-2/new_topology/lan1/occupied_ips"
+occupied_ports="/home/claudio/Honey-MTD-2/new_topology/lan1/occupied_ports"
 
 if [ "$subnet" == "$subnet1" ]; then
     comment="#Subnet 1"
