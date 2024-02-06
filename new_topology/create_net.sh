@@ -5,13 +5,15 @@ source functions.sh
 vlans1=("vlan11" "vlan12" "vlan13" "vlan16" "vlan17")
 vlans2=("vlan21" "vlan22" "vlan23")
 
-setup_ovs_bridge "br0_lan1" "br1_lan1" "br_lan2" "br_lan3" "br_wan"
+setup_ovs_bridge "br0_lan1" "br1_lan1" "br_lan2" "br_lan3" "br_lan4" "br_wan"
 
 create_ovs_bridge "br0_lan1" "3a:4d:a7:05:2a:45"
 create_ovs_bridge "br1_lan1" "3a:4d:a7:05:2a:46"
 create_ovs_bridge "br_lan2" "3a:4d:a7:05:2a:49"
 create_ovs_bridge "br_lan3" "3a:4d:a7:05:2a:47"
+create_ovs_bridge "br_lan4" "3a:4d:a7:05:2a:67"
 create_ovs_bridge "br_wan" "3a:4d:a7:05:2a:48"
+
 
 # sudo ovs-vsctl set bridge br0 other-config:datapath-id=209326269119040
 # sudo ovs-vsctl set bridge br1 other-config:datapath-id=187971798259276
@@ -39,6 +41,12 @@ create_vlan "vlan23" "br_lan2" "22" "10.2.5.1/24" "ea:6a:20:a0:96:12" "52"
 
 echo "Connect br_lan2 to controller 10.2.5.100:6633"
 sudo ovs-vsctl set-controller br_lan2 tcp:10.2.5.100:6633
+
+#LAN4 Management LAN
+create_vlan "vlan21" "br_lan4" "40" "10.4.3.1/24" "8a:ae:02:40:8f:96" "60"
+
+echo "Connect br_lan4 to controller 10.4.3.100:6633"
+sudo ovs-vsctl set-controller br_lan2 tcp:10.4.3.100:6633
 
 create_vlan_forward_rules "${vlans1[@]}"
 create_vlan_forward_rules "${vlans2[@]}"

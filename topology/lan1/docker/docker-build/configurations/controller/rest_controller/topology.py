@@ -3,12 +3,14 @@ from network import Host, Honeypot, Attacker, Subnet, Network, Gateway
 #------- NETWORK TOPOLPOGY LAN1 -------------------------------------------------------------- #    
 # Nodes
 #Subnet 1
+int_heralding_17ad20 = Honeypot("int_heralding_17ad20", "10.1.3.2", "080027aaae28", "10", '255.255.255.0')
 host = Host('host', '10.1.3.10', '08:00:27:b6:d0:66', 15, '255.255.255.0')
 service = Host('service', '10.1.3.11', '08:00:27:6d:ec:62', 3, '255.255.255.0')
 ssh_service = Host('ssh_service', '10.1.3.13', '08:00:27:b6:d0:69', 16, '255.255.255.0')
 heralding = Honeypot('heralding', '10.1.3.12', '08:00:27:6c:0a:bf', 4, '255.255.255.0')
 
 #Subnet 2
+heralding_105b34 = Honeypot("heralding_105b34", "10.1.4.2", "08:00:27:e5:9d:4b", 11, '255.255.255.0')
 cowrie = Honeypot('cowrie', '10.1.4.10', '08:00:27:b7:0e:58', 6, '255.255.255.0')
 heralding1 = Honeypot('heralding1', '10.1.4.11', '08:00:27:6d:f9:98', 13, '255.255.255.0')
 

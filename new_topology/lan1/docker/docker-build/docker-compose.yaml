@@ -1,6 +1,16 @@
 version: "3"
 
 services:
+    heralding_105b34:
+        build: ./images/heralding_imm
+        container_name: heralding_105b34
+        cap_add:
+        - NET_ADMIN 
+        tty: true
+        stdin_open: true
+        privileged: true
+        volumes:
+        - ./configurations/heralding:/home
     int_host: 
         build: ./images/host_imm
         container_name: int_host

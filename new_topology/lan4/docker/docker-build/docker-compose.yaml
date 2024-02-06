@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+    controller:
+        build: ./images/ryu_imm
+        container_name: controller
+        cap_add:
+          - NET_ADMIN 
+        tty: true
+        stdin_open: true
+        privileged: true
+        volumes:
+          - ./configurations/controller:/home
