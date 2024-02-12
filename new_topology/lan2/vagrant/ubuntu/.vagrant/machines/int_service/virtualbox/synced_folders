@@ -1,0 +1,1 @@
+{"virtualbox":{"/home/claudio/ubuntu/int_service":{"guestpath":"/home/claudio/ubuntu/int_service","hostpath":"/home/claudio/Honey-MTD-2/new_topology/lan2/vagrant/ubuntu/int_service","disabled":false,"__vagrantfile":true},"/vagrant":{"guestpath":"/vagrant","hostpath":"/home/claudio/Honey-MTD-2/new_topology/lan2/vagrant/ubuntu","disabled":false,"__vagrantfile":true}}}

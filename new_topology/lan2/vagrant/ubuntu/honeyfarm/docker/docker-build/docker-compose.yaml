@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+    heralding2:
+        build: ./images/heralding_imm
+        container_name: heralding2
+        cap_add:
+        - NET_ADMIN 
+        tty: true
+        stdin_open: true
+        privileged: true
+        volumes:
+        - ./configurations/heralding:/home
+
+    heralding:
+        build: ./images/heralding_imm
+        container_name: heralding
+        cap_add:
+          - NET_ADMIN 
+        tty: true
+        stdin_open: true
+        privileged: true
+        volumes:
+          - ./configurations/heralding:/home
+
