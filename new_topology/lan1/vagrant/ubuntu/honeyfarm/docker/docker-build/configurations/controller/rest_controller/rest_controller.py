@@ -40,31 +40,36 @@ class RestController(ExampleSwitch13):
         self.mac_to_port.setdefault(datapath.id, {})   
     
 
-    def redirect_to(self, dpid, src_ip, tcp_dst, source, destination, gw,):
+    def redirect_to(self, dpid, src_ip, tcp_port, source, destination, gw,destination_port=None):
         datapath = self.switches.get(dpid)
         parser = datapath.ofproto_parser
-        
+        if destination_port is None:
+            destination_port = tcp_port
         
         actions = [
             parser.OFPActionSetField(eth_dst=gw.get_MAC_addr()),
             parser.OFPActionSetField(ipv4_dst=destination.get_ip_addr()),
-            parser.OFPActionOutput(gw.get_ovs_port())
+            parser.OFPActionOutput(gw.get_ovs_port()),
+            parser.OFPActionSetField(tcp_dst=int(destination_port))
         ]
         match = parser.OFPMatch(
             eth_type=0x0800, ipv4_src=src_ip,
-            ipv4_dst=source.get_ip_addr(), ip_proto=6, tcp_dst=int(tcp_dst)
+            ipv4_dst=source.get_ip_addr(), ip_proto=6, tcp_dst=int(tcp_port)
         )
         self.add_flow(datapath, 1000, match, actions, 1)
 
-    def change_decoy_src(self, dpid, src_ip, subnet, decoy, tcp_port,gw,destination):
+    def change_decoy_src(self, dpid, src_ip, subnet, decoy, tcp_port,gw,destination,destination_port=None):
         datapath = self.switches.get(dpid)
         parser = datapath.ofproto_parser
+        if destination_port is None:
+            destination_port = tcp_port
         out_port = u.host_to_port(subnet, src_ip)
         actions = [parser.OFPActionSetField(ipv4_src=destination.get_ip_addr()),
                    parser.OFPActionSetField(eth_src=destination.get_MAC_addr()),
+                   parser.OFPActionSetField(tcp_dst=int(tcp_port)),
                    parser.OFPActionOutput(out_port)]
         match = parser.OFPMatch(eth_type=0x0800, ipv4_src=decoy.get_ip_addr(), ipv4_dst=src_ip, 
-                                eth_src= gw.get_MAC_addr(), ip_proto=6, tcp_src=int(tcp_port))                
+                                eth_src= gw.get_MAC_addr(), ip_proto=6, tcp_src=int(destination_port))                
         self.add_flow(datapath, 1000, match, actions, 1)
 
 
@@ -229,6 +234,7 @@ class SimpleSwitchController(ControllerBase):
             subnet=t.subnet1
             #dpid = int(dpid)     
             dpid = t.br0_dpid
+            destination_port = tcp_port
 
             decoy = map.decoy_mapping.get(decoy_json, None)
             source= map.source_mapping.get(source_json,None)
@@ -239,14 +245,17 @@ class SimpleSwitchController(ControllerBase):
                 b = man.sb[man.COWRIE_INDEX][man.SSH_INDEX]
                 if (a and b) == 0:
                     decoy_index = man.COWRIE_INDEX
-                    decoy = t.cowrie         
+                    #decoy = t.cowrie
+                    decoy = t.heralding_host
+                    destination_port = 2022
+
                 else: 
                     decoy_index = man.HERALDING_INDEX
                     decoy=t.heralding1
 
             man.sb[decoy_index][port_index] = 1 
-            simple_switch.redirect_to(dpid,src_IP,tcp_port,source,decoy,gw)
-            simple_switch.change_decoy_src(dpid, src_IP,subnet,decoy,tcp_port,gw,source)
+            simple_switch.redirect_to(dpid,src_IP,tcp_port,source,decoy,gw,destination_port)
+            simple_switch.change_decoy_src(dpid, src_IP,subnet,decoy,tcp_port,gw,source,destination_port)
             return Response(status=200)
         else:
             return Response(status=400)
