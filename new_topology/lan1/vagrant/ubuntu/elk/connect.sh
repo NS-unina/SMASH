@@ -9,7 +9,7 @@ curl -X POST \
 echo "REDIRECT TO HERALDING FTP"
 curl -X POST \
    -H 'Content-Type: application/json' \
-   -d "{\"Source_IP\": \"$1\", \"Dpid\": \"85884017520972\", \"Tcp_port\": \"21\", \"Decoy\": \"heralding1\", \"Source\": \"service\"}"\
+   -d "{\"Source_IP\": \"$1\", \"Dpid\": \"85884017520972\", \"Tcp_port\": \"21\", \"Decoy\": \"heralding4\", \"Source\": \"service\"}"\
    http://10.1.5.100:8080/rest_controller/redirect_traffic
 
 echo "REDIRECT TO COWRIE SMTP TELNET"

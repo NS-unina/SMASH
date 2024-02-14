@@ -230,32 +230,37 @@ class SimpleSwitchController(ControllerBase):
             subnet=t.subnet1
             #dpid = int(dpid)     
             dpid = t.br0_dpid
-            destination_port = tcp_port
 
+            
             decoy = map.decoy_mapping.get(decoy_json, None)
             source= map.source_mapping.get(source_json,None)
             decoy_index = map.index_decoy_mapping.get(decoy_json,None)
             port_index = map.index_port_mapping.get(tcp_port,None)
+            print(decoy_index)
+            print(port_index)
+            destination_port = man.ports[decoy_index][port_index]
+            print(destination_port)
             if(int(tcp_port) == 22):
                 print("TCP 22")   
                 a = man.sm[man.COWRIE_INDEX][man.SSH_INDEX]
                 b = man.sb[man.COWRIE_INDEX][man.SSH_INDEX]
                 if (a and b) == 0:
                     decoy_index = man.COWRIE_INDEX
-                    decoy = t.cowrie
-                    decoy = t.heralding_host
-                    destination_port = 2022
-                    print("cowrie")
+                    decoy = t.cowrie                    
+                    destination_port = man.ports_hp1[man.SSH_INDEX]
+                    print("Cowrie")
                     
 
                 else: 
                     decoy_index = man.HERALDING_INDEX
                     #decoy=t.heralding1
-                    decoy = t.heralding_host
-                    destination_port = 2022
-                    print("host")
+                    decoy = t.heralding1
+                    destination_port = man.ports_hp2[man.SSH_INDEX]
+                    print("heralding")
 
             man.sb[decoy_index][port_index] = 1 
+            
+            print(destination_port)
             simple_switch.redirect_to(dpid,src_IP,tcp_port,source,decoy,gw,destination_port)
             simple_switch.change_decoy_src(dpid, src_IP,subnet,decoy,tcp_port,gw,source,destination_port)
             return Response(status=200)

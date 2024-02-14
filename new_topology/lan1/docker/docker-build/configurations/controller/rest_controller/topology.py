@@ -9,10 +9,18 @@ ssh_service = Host('ssh_service', '10.1.3.13', '08:00:27:b6:d0:69', 16, '255.255
 heralding = Honeypot('heralding', '10.1.3.12', '08:00:27:6c:0a:bf', 4, '255.255.255.0')
 
 #Subnet 2
-cowrie = Honeypot('cowrie', '10.1.4.10', '08:00:27:b7:0e:58', 6, '255.255.255.0')
-heralding1 = Honeypot('heralding1', '10.1.4.11', '08:00:27:6d:f9:98', 13, '255.255.255.0')
+ti_host1 = Host('ti_host1', '10.1.4.10', '08:00:27:b7:0e:58', 6, '255.255.255.0')
+ti_host2 = Host('ti_host2', '10.1.4.17', '08:00:27:6d:ec:c4', 25, '255.255.255.0')
 
-heralding_host = Honeypot('heralding_host', '10.1.4.17', '08:00:27:6d:ec:c4', 25, '255.255.255.0')
+cowrie = Honeypot('cowrie', '10.1.4.10', '08:00:27:b7:0e:58', 6, '255.255.255.0')
+#heralding1 = Honeypot('heralding1', '10.1.4.11', '08:00:27:6d:f9:98', 13, '255.255.255.0')
+
+heralding1 = Honeypot('heralding1', '10.1.4.10', '08:00:27:b7:0e:58', 6, '255.255.255.0')
+heralding2 = Honeypot('heralding2', '10.1.4.10', '08:00:27:b7:0e:58', 6, '255.255.255.0')
+
+
+heralding3 = Honeypot('heralding3', '10.1.4.17', '08:00:27:6d:ec:c4', 25, '255.255.255.0')
+heralding4 = Honeypot('heralding4', '10.1.4.17', '08:00:27:6d:ec:c4', 25, '255.255.255.0')
 
 elk_if1 = Host('ELK_IF1', '10.1.5.10', '08:00:27:7d:b7:b8', 8, '255.255.255.0')
 elk_if2 = Host('ELK_IF2', '10.1.11.10', '08:00:27:f5:6b:90', 13, '255.255.255.0')
