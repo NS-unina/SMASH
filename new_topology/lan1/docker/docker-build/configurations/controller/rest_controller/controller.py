@@ -302,6 +302,16 @@ class ExampleSwitch13(app_manager.RyuApp):
         # PERMIT tcp input to heralding port 25
         self.permit_tcp_dstIP_dstPORT(parser, t.heralding.get_ip_addr(), t.heralding.get_ovs_port(), 25, datapath)
 
+        # PERMIT tcp input from service to honeyfarm
+        self.permit_tcp_host1_host2(parser, t.service.get_ip_addr(), t.heralding_host.get_ip_addr(), t.heralding_host.get_ovs_port(), datapath)
+        # PERMIT tcp input from gateway and elk to heralding
+        self.permit_tcp_host1_host2(parser, t.gw1.get_ip_addr(), t.heralding_host.get_ip_addr(), t.heralding_host.get_ovs_port(), datapath)
+        self.permit_tcp_host1_host2(parser, t.elk_if1.get_ip_addr(), t.heralding_host.get_ip_addr(), t.heralding_host.get_ovs_port(), datapath)
+
+        # PERMIT tcp input to honeyfarm
+        self.permit_tcp_dstIP_dstPORT(parser, t.heralding.get_ip_addr(), t.heralding.get_ovs_port(), 2022, datapath)
+        self.permit_tcp_dstIP_dstPORT(parser, t.heralding.get_ip_addr(), t.heralding.get_ovs_port(), 3022, datapath) 
+
         # DROP arp input to cowrie
         self.drop_tcp_dstIP(parser, t.cowrie.get_ip_addr(), datapath)
         self.permit_tcp_host1_host2(parser, t.gw1.get_ip_addr(), t.cowrie.get_ip_addr(), t.cowrie.get_ovs_port(), datapath)

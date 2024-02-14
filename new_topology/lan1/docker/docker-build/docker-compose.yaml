@@ -1,36 +1,6 @@
 version: "3"
 
 services:
-    heralding_502da8:
-        build: ./images/heralding_imm
-        container_name: heralding_502da8
-        cap_add:
-        - NET_ADMIN 
-        tty: true
-        stdin_open: true
-        privileged: true
-        volumes:
-        - ./configurations/heralding:/home
-    heralding_2c27cc:
-        build: ./images/heralding_imm
-        container_name: heralding_2c27cc
-        cap_add:
-        - NET_ADMIN 
-        tty: true
-        stdin_open: true
-        privileged: true
-        volumes:
-        - ./configurations/heralding:/home
-    heralding_105b34:
-        build: ./images/heralding_imm
-        container_name: heralding_105b34
-        cap_add:
-        - NET_ADMIN 
-        tty: true
-        stdin_open: true
-        privileged: true
-        volumes:
-        - ./configurations/heralding:/home
     int_host: 
         build: ./images/host_imm
         container_name: int_host
@@ -61,16 +31,6 @@ services:
         privileged: true
         volumes:
           - ./configurations/controller:/home
-    heralding:
-        build: ./images/heralding_imm
-        container_name: heralding
-        cap_add:
-          - NET_ADMIN 
-        tty: true
-        stdin_open: true
-        privileged: true
-        volumes:
-          - ./configurations/heralding:/home
     dmz_host:
         build: ./images/host_imm
         container_name: ext_host

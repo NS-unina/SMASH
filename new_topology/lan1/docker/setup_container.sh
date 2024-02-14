@@ -74,10 +74,4 @@ sudo ./my-ovs-docker add-port br1_lan1 eth1 ext_host h2 23 --ipaddress=10.1.10.1
 sudo ovs-vsctl -- set port h2_l tag=10
 sudo iptables -t nat -A POSTROUTING -o h2_l -j MASQUERADE
 
-sudo docker stop heralding
-sudo docker start heralding
-
-sudo ./my-ovs-docker add-port br0_lan1 eth1 heralding t1 14 --ipaddress=10.1.3.21/24 --macaddress=08:00:27:b6:d0:6c
-sudo ovs-vsctl -- set port t1_l tag=1
-sudo iptables -t nat -A POSTROUTING -o t1_l -j MASQUERADE
 
