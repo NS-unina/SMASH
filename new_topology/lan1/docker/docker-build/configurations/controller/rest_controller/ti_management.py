@@ -1,4 +1,7 @@
 import topology as t
+from network import Host, Honeypot, Attacker, Subnet, Network, Gateway
+from utils import Utils as u
+import mapping2 as map
 # THREAT INTELLIGENCE SUBNET MANAGEMENT
 # indexes
 COWRIE_INDEX = 0
@@ -12,19 +15,6 @@ SSH_INDEX = 0
 TELNET_INDEX= 1
 FTP_INDEX = 2
 SOCKS5_INDEX = 3
-
-def product_vector_matrix(vector, matrix):
- 
-    if len(vector) != len(matrix):
-        raise ValueError("Error")
-
-    result = [0] * len(matrix[0])
-
-    for i in range(len(matrix[0])):
-        for j in range(len(vector)):
-            result[i] += vector[j] * matrix[j][i]
-
-    return result
 
 #list of host HN
 hosts = [t.ti_host1, t.ti_host2]
@@ -43,7 +33,7 @@ services = ["ssh", "telnet", "ftp", "socks5"]
 s_hp1 = [1, 1, 0, 0]
 s_hp2 = [1, 0, 1, 1]
 s_hp3 = [1, 0, 1, 1]
-s_hp4 = [1, 0, 1, 1]
+s_hp4 = [1, 1, 1, 1]
 s_hp5 = [1, 0, 1, 1]
 #sm = [[1, 1, 0, 0], [1, 0, 1, 1],[1, 0, 1, 1]]
 sm= [s_hp1,s_hp2,s_hp3,s_hp4,s_hp5]
@@ -69,10 +59,10 @@ ports = [ports_hp1,ports_hp2,ports_hp3,ports_hp4,ports_hp5]
 #service distribution on a host hk
 #redundant services on Host 1
 #sd_h1 = h_h1 * sm
-sd_h1 = product_vector_matrix(h_h1,sm)
+sd_h1 = u.product_vector_matrix(h_h1,sm)
 #redundant services on Host 2
 #sd_h2 = h_h2 * sm
-sd_h2 = product_vector_matrix(h_h2,sm)
+sd_h2 = u.product_vector_matrix(h_h2,sm)
 
 
 #print(sd_h1)
@@ -83,6 +73,11 @@ sdh = [elem1 + elem2 for elem1, elem2 in zip(sd_h1, sd_h2)]
 
 #print(sdh)
 
+
 # service busy: sbn = 1 if it is busy, else it is 0
 # default = all services are free
-sb = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+sb = [[0, 1, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+
+#index= u.find_free_honeypot_by_service(sb, sm, TELNET_INDEX)
+#decoy = map.index_to_decoy_mapping.get (index,None)
+#print(decoy.get_name())

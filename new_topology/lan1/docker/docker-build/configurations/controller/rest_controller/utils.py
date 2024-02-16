@@ -33,3 +33,21 @@ class Utils():
                 ips.append(new_ip)
                 break
         return new_ip
+    
+    def product_vector_matrix(vector, matrix):
+        if len(vector) != len(matrix):
+            raise ValueError("Error")
+
+        result = [0] * len(matrix[0])
+
+        for i in range(len(matrix[0])):
+            for j in range(len(vector)):
+                result[i] += vector[j] * matrix[j][i]
+
+        return result
+    
+    def find_free_honeypot_by_service(service_busy, service_map, service):
+        for honeypot_index in range(len(service_busy)):
+            if service_busy[honeypot_index][service] == 0 and service_map[honeypot_index][service] == 1:
+                return honeypot_index
+        return None

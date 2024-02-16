@@ -14,6 +14,7 @@ from randmac import RandMac
 import topology as t
 import ti_management as man
 import mapping as map
+import mapping2 as map2
 
 
 name = 'rest_controller'
@@ -230,6 +231,8 @@ class SimpleSwitchController(ControllerBase):
             subnet=t.subnet1
             #dpid = int(dpid)     
             dpid = t.br0_dpid
+
+            
             
             decoy = map.decoy_mapping.get(decoy_json, None)
             source= map.source_mapping.get(source_json,None)
@@ -237,6 +240,11 @@ class SimpleSwitchController(ControllerBase):
 
             port_index = map.index_port_mapping.get(tcp_port,None)
             destination_port = man.ports[decoy_index][port_index]
+
+            decoy_index = u.find_free_honeypot_by_service(man.sb, man.sm, port_index)
+            decoy = map2.index_to_decoy_mapping.get (decoy_index,None)
+
+            print("L'honeypot libero per il servizio ", tcp_port, "è :", decoy.get_name())
             if(int(tcp_port) == 22):
                 print("TCP 22")   
                 a = man.sm[man.COWRIE_INDEX][man.SSH_INDEX]
