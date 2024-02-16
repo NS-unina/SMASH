@@ -24,6 +24,7 @@ index_decoy_mapping = {
 index_port_mapping = {
     "21": man.FTP_INDEX,
     "22": man.SSH_INDEX,
-    "23": man.TELNET_INDEX
+    "23": man.TELNET_INDEX,
+    "1080": man.SOCKS5_INDEX
 }
 
