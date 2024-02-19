@@ -50,4 +50,10 @@ class Utils():
         for honeypot_index in range(len(service_busy)):
             if service_busy[honeypot_index][service] == 0 and service_map[honeypot_index][service] == 1:
                 return honeypot_index
+            
+
         return None
+    
+    
+            
+    

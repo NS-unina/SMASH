@@ -1,0 +1,18 @@
+python3: can't open file 'script.py': [Errno 2] No such file or directory
+app.py
+conf.sh
+docker
+filebeat.yml
+heralding.yml
+metricbeat.yml
+nohup.out
+output.log
+start.sh
+test.sh
+ * Serving Flask app 'app'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://10.0.2.15:8080
+Press CTRL+C to quit

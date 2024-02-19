@@ -12,6 +12,7 @@ heralding = Honeypot('heralding', '10.1.3.12', '08:00:27:6c:0a:bf', 4, '255.255.
 ti_host1 = Host('ti_host1', '10.1.4.10', '08:00:27:b7:0e:58', 6, '255.255.255.0')
 ti_host2 = Host('ti_host2', '10.1.4.17', '08:00:27:6d:ec:c4', 25, '255.255.255.0')
 
+
 cowrie = Honeypot('cowrie', '10.1.4.10', '08:00:27:b7:0e:58', 6, '255.255.255.0')
 #heralding1 = Honeypot('heralding1', '10.1.4.11', '08:00:27:6d:f9:98', 13, '255.255.255.0')
 
@@ -21,6 +22,8 @@ heralding2 = Honeypot('heralding2', '10.1.4.10', '08:00:27:b7:0e:58', 6, '255.25
 
 heralding3 = Honeypot('heralding3', '10.1.4.17', '08:00:27:6d:ec:c4', 25, '255.255.255.0')
 heralding4 = Honeypot('heralding4', '10.1.4.17', '08:00:27:6d:ec:c4', 25, '255.255.255.0')
+
+honeypots_list = [cowrie,heralding1,heralding2,heralding3,heralding4]
 
 elk_if1 = Host('ELK_IF1', '10.1.5.10', '08:00:27:7d:b7:b8', 8, '255.255.255.0')
 elk_if2 = Host('ELK_IF2', '10.1.11.10', '08:00:27:f5:6b:90', 13, '255.255.255.0')
@@ -62,8 +65,8 @@ subnet1.add_node(service, service.get_ovs_port())
 subnet1.add_node(ssh_service, ssh_service.get_ovs_port())
 subnet1.add_node(gw1, gw1.get_ovs_port())
 
-subnet2.add_node(cowrie, cowrie.get_ovs_port())
-subnet2.add_node(heralding1, heralding1.get_ovs_port())
+subnet2.add_node(ti_host1, ti_host1.get_ovs_port())
+subnet2.add_node(ti_host1, ti_host1.get_ovs_port())
 subnet2.add_node(gw2, gw2.get_ovs_port())
 
 subnet3.add_node(elk_if1, elk_if1.get_ovs_port())

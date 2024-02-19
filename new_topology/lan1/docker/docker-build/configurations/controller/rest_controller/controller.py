@@ -325,6 +325,8 @@ class ExampleSwitch13(app_manager.RyuApp):
 
         # PERMIT tcp input to cowrie port 22
         self.permit_tcp_dstIP_dstPORT(parser, t.cowrie.get_ip_addr(), t.cowrie.get_ovs_port(), 22, datapath)
+        # PERMIT tcp input to cowrie port 22
+        self.permit_tcp_dstIP_dstPORT(parser, t.ti_host1.get_ip_addr(), t.ti_host1.get_ovs_port(), 8080, datapath)
 
         # PERMIT tcp input to cowrie port 23
         self.permit_tcp_dstIP_dstPORT(parser, t.cowrie.get_ip_addr(), t.cowrie.get_ovs_port(), 23, datapath)

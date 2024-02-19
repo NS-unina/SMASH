@@ -33,6 +33,10 @@ sudo sed -i 's/#Port 22/Port 40001/' /etc/ssh/sshd_config
 sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
 sudo systemctl restart sshd
 
+sudo apt install -y apache2  # Installa Apache
+sudo apt install -y python3-pip  # Installa pip per Python
+sudo pip3 install flask  # Installa Flask per Python
+
 # shellcheck disable=SC2155
 #export pass=$(echo mypasswd | openssl passwd -6 -stdin)
 #sudo useradd -m -p $pass -s /bin/bash administrator
@@ -75,6 +79,8 @@ sudo dpkg -i metricbeat-8.7.0-amd64.deb
 #auditbeat
 curl -L -O https://artifacts.elastic.co/downloads/beats/auditbeat/auditbeat-8.7.0-amd64.deb
 sudo dpkg -i auditbeat-8.7.0-amd64.deb
+
+chmod +x home/claudio/ubuntu/host2/your_script.sh
 
 sudo cp /home/claudio/ubuntu/ext_cowrie/filebeat.yml /etc/filebeat/filebeat.yml
 sudo systemctl start filebeat
