@@ -45,9 +45,9 @@ Vagrant.configure("2") do |config|
 
     deploy_service(config, "int_service", "ubuntu/focal64", "512","int_service", 22, 3200,"ssh", "tap2", "0800276dec72", "10.1.3.11", ["10.1.4.0/24", "10.1.5.0/24", "10.1.10.0/24", "10.1.11.0/24"],"10.1.3.1")
     deploy_honeypot(config, "int_heralding", "ubuntu/focal64", "512","shared", 22, 3201,"ssh", "tap3", "0800276c0abf", "10.1.3.12", ["10.1.4.0/24", "10.1.5.0/24", "10.1.10.0/24", "10.1.11.0/24"],"10.1.3.1")
-    deploy_honeyfarm(config, "honeyfarm", "ubuntu/focal64", "1024","honeyfarm", 22, 3225,"ssh", "tap15", "0800276decc4", "10.1.4.17", ["10.1.3.0/24", "10.1.5.0/24", "10.1.10.0/24", "10.1.11.0/24"],"10.1.4.1")
+    deploy_honeyfarm(config, "ti_host2", "ubuntu/focal64", "1024","ti_host2", 22, 3225,"ssh", "tap15", "0800276decc4", "10.1.4.17", ["10.1.3.0/24", "10.1.5.0/24", "10.1.10.0/24", "10.1.11.0/24"],"10.1.4.1")
     #deploy_honeypot(config, "ext_cowrie", "ubuntu/focal64", "1024","ext_cowrie", 22, 3202,"ssh", "tap4", "080027b70e58", "10.1.4.10", ["10.1.3.0/24", "10.1.5.0/24", "10.1.10.0/24", "10.1.11.0/24"],"10.1.4.1")
-    deploy_honeypot(config, "host2", "ubuntu/focal64", "1024","host2", 22, 3202,"ssh", "tap4", "080027b70e58", "10.1.4.10", ["10.1.3.0/24", "10.1.5.0/24", "10.1.10.0/24", "10.1.11.0/24"],"10.1.4.1")
+    deploy_honeyfarm(config, "ti_host1", "ubuntu/focal64", "1024","ti_host1", 22, 3202,"ssh", "tap4", "080027b70e58", "10.1.4.10", ["10.1.3.0/24", "10.1.5.0/24", "10.1.10.0/24", "10.1.11.0/24"],"10.1.4.1")
     #deploy_honeypot(config, "ext_heralding", "ubuntu/focal64", "512","ext_heralding", 22, 3204,"ssh", "tap7", "0800276df998", "10.1.4.11", ["10.1.3.0/24", "10.1.5.0/24", "10.1.10.0/24", "10.1.11.0/24"],"10.1.4.1")
     #deploy_honeypot(config, "dmz_heralding", "ubuntu/focal64", "512","dmz_heralding", 22, 3205,"ssh", "tap10", "0800272c3092", "10.1.10.10", ["10.1.3.0/24", "10.1.5.0/24", "10.1.4.0/24", "10.1.11.0/24"],"10.1.10.1")
     #deploy_honeypot(config, "dmz_cowrie", "ubuntu/focal64", "512","dmz_cowrie", 22, 3206,"ssh", "tap12", "080027b70e59", "10.1.10.13", ["10.1.3.0/24", "10.1.5.0/24", "10.1.4.0/24", "10.1.11.0/24"],"10.1.10.1")

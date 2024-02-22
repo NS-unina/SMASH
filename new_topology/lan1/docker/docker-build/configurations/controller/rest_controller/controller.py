@@ -123,14 +123,16 @@ class ExampleSwitch13(app_manager.RyuApp):
                 out_port = t.heralding.get_ovs_port()
             elif dst == t.gw1.get_MAC_addr():
                 out_port = t.gw1.get_ovs_port()
-            elif dst == t.cowrie.get_MAC_addr():
-                out_port = t.cowrie.get_ovs_port()
             elif dst == t.gw2.get_MAC_addr():
                 out_port = t.gw2.get_ovs_port()
             elif dst == t.elk_if1.get_MAC_addr():
                 out_port = t.elk_if1.get_ovs_port()
             elif dst == t.gw3.get_MAC_addr():
                 out_port = t.gw3.get_ovs_port()
+            elif dst == t.ti_host1.get_MAC_addr():
+                out_port = t.ti_host1.get_ovs_port()
+            elif dst == t.ti_host2.get_MAC_addr():
+                out_port = t.ti_host2.get_ovs_port()
 
 
             actions = [parser.OFPActionOutput(out_port)]
@@ -262,16 +264,16 @@ class ExampleSwitch13(app_manager.RyuApp):
         self.drop_tcp_srcIP_srcMAC_dstIP(parser, t.heralding.get_ip_addr(), t.heralding.get_MAC_addr(), 
                                          '10.1.5.100', datapath)  
         
-        # DROP cowrie to controller    
-        self.drop_icmp_srcIP_srcMAC_dstIP(parser, t.cowrie.get_ip_addr(), t.cowrie.get_MAC_addr(), 
+        # DROP ti_host1 to controller    
+        self.drop_icmp_srcIP_srcMAC_dstIP(parser, t.ti_host1.get_ip_addr(), t.ti_host1.get_MAC_addr(), 
                                          '10.1.5.100', datapath)    
-        self.drop_tcp_srcIP_srcMAC_dstIP(parser, t.cowrie.get_ip_addr(), t.cowrie.get_MAC_addr(), 
+        self.drop_tcp_srcIP_srcMAC_dstIP(parser, t.ti_host1.get_ip_addr(), t.ti_host1.get_MAC_addr(), 
                                          '10.1.5.100', datapath)
         
-        # DROP heralding1 to controller
-        self.drop_icmp_srcIP_srcMAC_dstIP(parser, t.heralding1.get_ip_addr(), t.heralding1.get_MAC_addr(), 
+        # DROP ti_host2 to controller
+        self.drop_icmp_srcIP_srcMAC_dstIP(parser, t.ti_host2.get_ip_addr(), t.ti_host2.get_MAC_addr(), 
                                          '10.1.5.100', datapath)    
-        self.drop_tcp_srcIP_srcMAC_dstIP(parser, t.heralding1.get_ip_addr(), t.heralding1.get_MAC_addr(), 
+        self.drop_tcp_srcIP_srcMAC_dstIP(parser, t.ti_host2.get_ip_addr(), t.ti_host2.get_MAC_addr(), 
                                          '10.1.5.100', datapath)          
 
         # DROP arp input to service
@@ -317,21 +319,35 @@ class ExampleSwitch13(app_manager.RyuApp):
         self.permit_tcp_dstIP_dstPORT(parser, t.ti_host1.get_ip_addr(), t.ti_host1.get_ovs_port(), 2022, datapath)
         self.permit_tcp_dstIP_dstPORT(parser, t.ti_host1.get_ip_addr(), t.ti_host1.get_ovs_port(), 3022, datapath)
         # PERMIT tcp input to honeyfarm
-        self.permit_tcp_dstIP_dstPORT(parser, t.ti_host1.get_ip_addr(), t.ti_host2.get_ovs_port(), 2022, datapath)
-        self.permit_tcp_dstIP_dstPORT(parser, t.ti_host1.get_ip_addr(), t.ti_host2.get_ovs_port(), 3022, datapath)  
+        self.permit_tcp_dstIP_dstPORT(parser, t.ti_host2.get_ip_addr(), t.ti_host2.get_ovs_port(), 2022, datapath)
+        self.permit_tcp_dstIP_dstPORT(parser, t.ti_host2.get_ip_addr(), t.ti_host2.get_ovs_port(), 3022, datapath)  
 
-        # DROP arp input to cowrie
-        self.drop_tcp_dstIP(parser, t.cowrie.get_ip_addr(), datapath)
-        self.permit_tcp_host1_host2(parser, t.gw1.get_ip_addr(), t.cowrie.get_ip_addr(), t.cowrie.get_ovs_port(), datapath)
-        self.permit_tcp_host1_host2(parser, t.elk_if1.get_ip_addr(), t.cowrie.get_ip_addr(), t.cowrie.get_ovs_port(), datapath)
+        # DROP arp input to ti_host1
+        self.drop_tcp_dstIP(parser, t.ti_host1.get_ip_addr(), datapath)
+        self.permit_tcp_host1_host2(parser, t.gw1.get_ip_addr(), t.ti_host1.get_ip_addr(), t.ti_host1.get_ovs_port(), datapath)
+        self.permit_tcp_host1_host2(parser, t.elk_if1.get_ip_addr(), t.ti_host1.get_ip_addr(), t.ti_host1.get_ovs_port(), datapath)
 
-        # PERMIT tcp input to cowrie port 22
-        self.permit_tcp_dstIP_dstPORT(parser, t.cowrie.get_ip_addr(), t.cowrie.get_ovs_port(), 22, datapath)
-        # PERMIT tcp input to cowrie port 22
+        # PERMIT tcp input to ti_host1 port 22
+        self.permit_tcp_dstIP_dstPORT(parser, t.ti_host1.get_ip_addr(), t.ti_host1.get_ovs_port(), 22, datapath)
+        # PERMIT tcp input to ti_host1 port 22
         self.permit_tcp_dstIP_dstPORT(parser, t.ti_host1.get_ip_addr(), t.ti_host1.get_ovs_port(), 8080, datapath)
 
-        # PERMIT tcp input to cowrie port 23
-        self.permit_tcp_dstIP_dstPORT(parser, t.cowrie.get_ip_addr(), t.cowrie.get_ovs_port(), 23, datapath)
+        # PERMIT tcp input to ti_host1 port 23
+        self.permit_tcp_dstIP_dstPORT(parser, t.ti_host1.get_ip_addr(), t.ti_host1.get_ovs_port(), 23, datapath)
+
+        
+        # DROP arp input to ti_host2
+        self.drop_tcp_dstIP(parser, t.ti_host2.get_ip_addr(), datapath)
+        self.permit_tcp_host1_host2(parser, t.gw1.get_ip_addr(), t.ti_host2.get_ip_addr(), t.ti_host2.get_ovs_port(), datapath)
+        self.permit_tcp_host1_host2(parser, t.elk_if1.get_ip_addr(), t.ti_host2.get_ip_addr(), t.ti_host2.get_ovs_port(), datapath)
+
+        # PERMIT tcp input to ti_host2 port 22
+        self.permit_tcp_dstIP_dstPORT(parser, t.ti_host2.get_ip_addr(), t.ti_host2.get_ovs_port(), 22, datapath)
+        # PERMIT tcp input to ti_host2 port 22
+        self.permit_tcp_dstIP_dstPORT(parser, t.ti_host2.get_ip_addr(), t.ti_host2.get_ovs_port(), 8080, datapath)
+
+        # PERMIT tcp input to ti_host2 port 23
+        self.permit_tcp_dstIP_dstPORT(parser, t.ti_host2.get_ip_addr(), t.ti_host2.get_ovs_port(), 23, datapath)
 
         # MTD PROACTIVE PORT SHUFFLING STARTING RULES
         self.redirect_protocol_syn(parser, datapath, self.port)

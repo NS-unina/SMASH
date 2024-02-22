@@ -49,11 +49,10 @@ class RestController(ExampleSwitch13):
         self.switches[datapath.id] = datapath
         self.mac_to_port.setdefault(datapath.id, {})
 
-    def create_new_honeypot():
+    def create_new_honeypot(self,host):
         index = max(man.index_honeypot.values()) + 1
         #IL NOME SCELTO SARA DEL TIPO "heralding5"
         name ="heralding"+str(index)
-        host = t.ti_host1
         new_ssh_port= f.find_free_port(man.ports_host1,4000)
         man.ports_host1.append(new_ssh_port)
         new_ftp_port= f.find_free_port(man.ports_host1,4000)
@@ -183,8 +182,14 @@ class SimpleSwitchController(ControllerBase):
             #Da testare
             if decoy_index is None:
                 print("Creazione nuovo honeypot heralding")
-                simple_switch.creat_new_honeypot()
-                decoy_index = u.find_free_honeypot_by_service(man.sb, man.sm, port_index)          
+                host = t.ti_host2
+                simple_switch.create_new_honeypot(host)
+                decoy_index = u.find_free_honeypot_by_service(man.sb, man.sm, port_index)
+                if(decoy_index) is None:
+                    print("Non c'è alcun honeypot cowrie disponibile")
+                    return Response(status=400)
+
+            
             
             decoy = f.index_to_decoy_mapping.get (decoy_index,None)
             print("L'honeypot libero per il servizio ", tcp_port, "è :", decoy.get_name())
@@ -228,7 +233,8 @@ class SimpleSwitchController(ControllerBase):
             #Da testare
             if decoy_index is None:
                 print("Creazione nuovo honeypot heralding")
-                simple_switch.creat_new_honeypot()
+                host = t.ti_host2
+                simple_switch.create_new_honeypot(host)
                 decoy_index = u.find_free_honeypot_by_service(man.sb, man.sm, port_index)
 
             decoy = f.index_to_decoy_mapping.get (decoy_index,None)

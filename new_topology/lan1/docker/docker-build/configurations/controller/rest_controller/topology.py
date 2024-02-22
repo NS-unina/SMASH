@@ -25,13 +25,14 @@ class NetworkTopology:
         self.ti_host1 = Host('ti_host1', '10.1.4.10', '08:00:27:b7:0e:58', 6, '255.255.255.0')
         self.ti_host2 = Host('ti_host2', '10.1.4.17', '08:00:27:6d:ec:c4', 25, '255.255.255.0')
 
-        self.cowrie = Honeypot('cowrie', '10.1.4.10', '08:00:27:b7:0e:58', 6, '255.255.255.0')
+        self.cowrie1 = Honeypot('cowrie1', '10.1.4.10', '08:00:27:b7:0e:58', 6, '255.255.255.0')
+        self.cowrie2 = Honeypot('cowrie2', '10.1.4.17', '08:00:27:6d:ec:c4', 25, '255.255.255.0')       
         self.heralding1 = Honeypot('heralding1', '10.1.4.10', '08:00:27:b7:0e:58', 6, '255.255.255.0')
         self.heralding2 = Honeypot('heralding2', '10.1.4.10', '08:00:27:b7:0e:58', 6, '255.255.255.0')
         self.heralding3 = Honeypot('heralding3', '10.1.4.17', '08:00:27:6d:ec:c4', 25, '255.255.255.0')
         self.heralding4 = Honeypot('heralding4', '10.1.4.17', '08:00:27:6d:ec:c4', 25, '255.255.255.0')
 
-        self.honeypots_list = [self.cowrie, self.heralding1, self.heralding2, self.heralding3, self.heralding4]
+        self.honeypots_list = [self.cowrie1, self.cowrie2, self.heralding1, self.heralding2, self.heralding3, self.heralding4]
 
         self.elk_if1 = Host('ELK_IF1', '10.1.5.10', '08:00:27:7d:b7:b8', 8, '255.255.255.0')
         self.elk_if2 = Host('ELK_IF2', '10.1.11.10', '08:00:27:f5:6b:90', 13, '255.255.255.0')

@@ -7,7 +7,8 @@ t = NetworkTopology()
 man = HoneypotManager()
 
 decoy_mapping = {
-    "cowrie": t.cowrie,    
+    "cowrie1": t.cowrie1,   
+    "cowrie2":t.cowrie2, 
     "heralding": t.heralding,
     "heralding1": t.heralding1,
     "heralding2": t.heralding2,
@@ -19,11 +20,12 @@ source_mapping = {
     "ssh_service": t.ssh_service
 }
 index_decoy_mapping = {
-    "cowrie": man.COWRIE_INDEX,
-    "heralding1": man.HERALDING1_INDEX,
-    "heralding2": man.HERALDING2_INDEX,
-    "heralding3": man.HERALDING3_INDEX,
-    "heralding4": man.HERALDING4_INDEX,
+    "cowrie1": man.index_honeypot.get("cowrie1",None),
+    "cowrie2": man.index_honeypot.get("cowrie2",None),
+    "heralding1": man.index_honeypot.get("heralding1",None),
+    "heralding2": man.index_honeypot.get("heralding1",None),
+    "heralding3": man.index_honeypot.get("heralding1",None),
+    "heralding4": man.index_honeypot.get("heralding1",None),
     
 }
 

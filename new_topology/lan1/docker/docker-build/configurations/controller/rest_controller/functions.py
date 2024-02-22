@@ -9,11 +9,12 @@ man = HoneypotManager()
 t = NetworkTopology()
 
 index_to_decoy_mapping = {
-    0: t.cowrie,
-    1: t.heralding1,
-    2: t.heralding2,
-    3: t.heralding3,
-    4: t.heralding4,
+    0: t.cowrie1,
+    1: t.cowrie2,
+    2: t.heralding1,
+    3: t.heralding2,
+    4: t.heralding3,
+    5: t.heralding4,
 }
 
 def add_new_honeypot(name,host,s_hp,ports_hp): 
