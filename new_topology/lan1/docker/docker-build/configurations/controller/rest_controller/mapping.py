@@ -1,7 +1,9 @@
 # decoy_mapping.py
 from ti_management import HoneypotManager
-import topology as t
+from topology import NetworkTopology
 
+
+t = NetworkTopology()
 man = HoneypotManager()
 
 decoy_mapping = {
@@ -14,6 +16,7 @@ decoy_mapping = {
 }
 source_mapping = {
     "service": t.service,
+    "ssh_service": t.ssh_service
 }
 index_decoy_mapping = {
     "cowrie": man.COWRIE_INDEX,

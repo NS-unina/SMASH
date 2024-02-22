@@ -1,7 +1,8 @@
-import topology as t
+from topology import NetworkTopology
 from network import Host, Honeypot
 from utils import Utils as u
 
+t = NetworkTopology()
 class HoneypotManager:
     #PATTERN SINGLETON
     _instance = None

@@ -24,7 +24,9 @@ from utils import Utils as u
 from network import Host, Honeypot, Attacker, Subnet, Network, Gateway
 from ryu.lib.packet import tcp, icmp, arp, ipv4, vlan
 import random
-import topology as t
+from topology import NetworkTopology
+
+t = NetworkTopology()
 
 class ExampleSwitch13(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]

@@ -1,4 +1,4 @@
-import topology as t
+from topology import NetworkTopology
 import requests
 import mapping as map
 from ti_management import HoneypotManager
@@ -6,6 +6,7 @@ from ti_management import HoneypotManager
 from network import Honeypot, Host
 
 man = HoneypotManager()
+t = NetworkTopology()
 
 index_to_decoy_mapping = {
     0: t.cowrie,
@@ -24,7 +25,7 @@ def add_new_honeypot(name,host,s_hp,ports_hp):
     response = requests.post(url, data=payload)
 
     if response.status_code == 200:
-        print("Richiesta POST inviata con successo!")
+        print("200 OK, Honeypot creato con successo")
     else:
         print("Si è verificato un errore durante l'invio della richiesta:", response.status_code)
         print("Messaggio di errore:", response.text)
