@@ -137,6 +137,6 @@ def deploy_elk(config, name, box, memory_size, host_path, port_vm, port_host, po
         
       
         vm.vm.provision "shell", path: "./configurations/elk.sh"
-        vm.vm.provision "shell", path: "./home/start.sh"
+        vm.vm.provision "shell", path: "./elk/start.sh"
     end
     end
