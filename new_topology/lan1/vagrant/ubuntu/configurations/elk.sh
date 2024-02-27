@@ -64,6 +64,7 @@ cp /home/claudio/ubuntu/elk/connect_ext.sh /home/vagrant
 cp /home/claudio/ubuntu/elk/connect_host.sh /home/vagrant
 cp /home/claudio/ubuntu/elk/connect_host_ext.sh /home/vagrant
 cp /home/claudio/ubuntu/elk/take_ip.py /home/vagrant
+cp /home/claudio/ubuntu/elk/start.sh /home/vagrant
 
 sleep 20
 curl -X POST "127.0.0.1:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@/home/claudio/ubuntu/elk/kibana_conf/export.ndjson

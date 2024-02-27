@@ -111,7 +111,7 @@ def deploy_honeyfarm2(config, name, box, memory_size, host_path, port_vm, port_h
     end
     end    
 
-def deploy_elk(config, name, box, memory_size, host_path, port_vm, port_host, port_id, tap, mac_tap, ip_address_tap, routes,ip_address_route)
+def deploy_elk(config, name, box, memory_size, host_path, port_vm, port_host, port_id, tap1, tap2, mac_tap1, mac_tap2, ip_address_tap1, ip_address_tap2, routes1, routes2, ip_address_route1, ip_address_route2)
       config.vm.define name do |vm|
         vm.vm.box = box
         vm.vm.provider "virtualbox" do |vb|
@@ -119,15 +119,24 @@ def deploy_elk(config, name, box, memory_size, host_path, port_vm, port_host, po
         end
         vm.vm.synced_folder "elk/", "/home/claudio/ubuntu/elk"
         vm.vm.network :forwarded_port, guest: port_vm, host: port_host, id: port_id
-        vm.vm.network "public_network", bridge: tap, mac: mac_tap, ip: ip_address_tap
+        vm.vm.network "public_network", bridge: tap1, mac: mac_tap1, ip: ip_address_tap1
+        vm.vm.network "public_network", bridge: tap2, mac: mac_tap2, ip: ip_address_tap2
+        
       
-        routes.each do |route|
+        routes1.each do |route|
           vm.vm.provision "shell",
         run: "always",
-        inline: "ip route add #{route} via #{ip_address_route} dev enp0s8"
+        inline: "ip route add #{route} via #{ip_address_route1} dev enp0s8"
         end
+        
+        routes2.each do |route|
+          vm.vm.provision "shell",
+        run: "always",
+        inline: "ip route add #{route} via #{ip_address_route2} dev enp0s9"
+        end
+        
       
         vm.vm.provision "shell", path: "./configurations/elk.sh"
-        vm.vm.provision "shell", path: "./elk/start.sh"
-      end
+        vm.vm.provision "shell", path: "./home/start.sh"
+    end
     end
