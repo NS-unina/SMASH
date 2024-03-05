@@ -72,6 +72,8 @@ class RestController(ExampleSwitch13):
     def redirect_to(self, dpid, src_ip, tcp_port, source, destination, gw,destination_port):
         datapath = self.switches.get(dpid)
         parser = datapath.ofproto_parser
+        self.permit_tcp_host1_host2(parser, src_ip, source.get_ip_addr(), source.get_ovs_port(), datapath)
+        self.permit_tcp_host1_host2(parser, source.get_ip_addr(), destination.get_ip_addr(), destination.get_ovs_port(), datapath)
         self.permit_tcp_dstIP_dstPORT(parser, destination.get_ip_addr(), destination.get_ovs_port(), int(destination_port), datapath)
         actions = [
             parser.OFPActionSetField(eth_dst=gw.get_MAC_addr()),
@@ -107,52 +109,7 @@ class RestController(ExampleSwitch13):
         match = parser.OFPMatch(eth_type=0x0800, ipv4_src=src_ip, ipv4_dst=t.service.get_ip_addr(), 
                                 eth_src=src_mac, ip_proto=6, tcp_dst=80)
         self.add_flow(datapath, 1000, match, actions, 0)
-
-    # REDIRECTION TO HERALDING FOR DMZ HOST (SERVICE SSH, PORT 22)
-    def redirect_to_heralding_ssh_ext(self, dpid, src_ip):
-        datapath = self.switches.get(dpid)
-        parser = datapath.ofproto_parser
-        src_mac = u.host_to_mac(t.subnet4, src_ip)
-        actions = [parser.OFPActionSetField(eth_dst=t.gw10.get_MAC_addr()),
-                   parser.OFPActionSetField(ipv4_dst=t.heralding1.get_ip_addr()),
-                   parser.OFPActionOutput(t.gw10.get_ovs_port())]
-        match = parser.OFPMatch(eth_type=0x0800, ipv4_src=src_ip,
-                                ipv4_dst=t.dmz_service.get_ip_addr(), ip_proto=6, tcp_dst=22)              
-        self.add_flow(datapath, 1000, match, actions, 1)
-    
-    def change_heralding_src_ssh_ext(self, dpid, src_ip):
-        datapath = self.switches.get(dpid)
-        parser = datapath.ofproto_parser
-        out_port = u.host_to_port(t.subnet4, src_ip)
-        actions = [parser.OFPActionSetField(ipv4_src=t.dmz_service.get_ip_addr()),
-                   parser.OFPActionSetField(eth_src=t.dmz_service.get_MAC_addr()),
-                   parser.OFPActionOutput(out_port)]
-        match = parser.OFPMatch(eth_type=0x0800, ipv4_src=t.heralding1.get_ip_addr(), ipv4_dst=src_ip, 
-                                eth_src=t.gw10.get_MAC_addr(), ip_proto=6, tcp_src=22)                
-        self.add_flow(datapath, 1000, match, actions, 1)
-    
-    # REDIRECT TO COWRIE FROM DMZ HOST (SERVICE SSH, PORT 22)
-    def redirect_to_cowrie_ssh_ext(self, dpid, src_ip):
-        datapath = self.switches.get(dpid)
-        parser = datapath.ofproto_parser
-        src_mac = u.host_to_mac(t.subnet4, src_ip)
-        actions = [parser.OFPActionSetField(eth_dst=t.gw10.get_MAC_addr()),
-                   parser.OFPActionSetField(ipv4_dst=t.cowrie.get_ip_addr()),
-                   parser.OFPActionOutput(t.gw10.get_ovs_port())]
-        match = parser.OFPMatch(eth_type=0x0800, ipv4_src=src_ip,
-                                ipv4_dst=t.dmz_service.get_ip_addr(), ip_proto=6, tcp_dst=22)              
-        self.add_flow(datapath, 1000, match, actions, 1)
-    
-    def change_cowrie_src_ssh_ext(self, dpid, src_ip):
-        datapath = self.switches.get(dpid)
-        parser = datapath.ofproto_parser
-        out_port = u.host_to_port(t.subnet4, src_ip)
-        actions = [parser.OFPActionSetField(ipv4_src=t.dmz_service.get_ip_addr()),
-                   parser.OFPActionSetField(eth_src=t.dmz_service.get_MAC_addr()),
-                   parser.OFPActionOutput(out_port)]
-        match = parser.OFPMatch(eth_type=0x0800, ipv4_src=t.cowrie.get_ip_addr(), ipv4_dst=src_ip, 
-                                eth_src=t.gw10.get_MAC_addr(), ip_proto=6, tcp_src=22)                
-        self.add_flow(datapath, 1000, match, actions, 1)   
+   
 
 class SimpleSwitchController(ControllerBase):
     def __init__(self, req, link, data, **config):
@@ -170,12 +127,15 @@ class SimpleSwitchController(ControllerBase):
             src_IP = richiesta['Source_IP']
             tcp_port = richiesta['Tcp_port']
             source_json = richiesta['Source']
-            gw=t.gw1
-            subnet=t.subnet1    
-            dpid = t.br0_dpid
+            gw_json=richiesta['Gateway']
+            subnet_json = richiesta['Subnet']
+            br_json = richiesta ['br'] 
            
             source= map.source_mapping.get(source_json,None)
             port_index = map.index_port_mapping.get(tcp_port,None)
+            gw = map.gateway_mapping.get(gw_json,None)
+            subnet= map.subnet_mapping.get(subnet_json,None)
+            dpid = map.dpid_mapping.get(br_json,None)   
 
             # Trova il primo honeypot libero per quel servizio
             decoy_index = u.find_free_honeypot_by_service(man.sb, man.sm, port_index)           
@@ -259,35 +219,7 @@ class SimpleSwitchController(ControllerBase):
             #simple_switch.send_to_controller(dpid, src_IP)
             return Response(status=200)
         else:
-            return Response(status=400)
-    
-    #passare a redirect traffic cambiando a br1
-    @route('restswitch', '/rest_controller/redirect_ssh_dmz', methods=['POST'])
-    def redirect_to_heralding_dmz_ssh(self, req, **kwargs):
-        richiesta = req.json
-        simple_switch = self.simple_switch_app
-
-        if richiesta:
-            print(richiesta)
-            dpid = richiesta['Dpid']
-            src_IP = richiesta['Source_IP']
-            #dpid = int(dpid) 
-            dpid = t.br1_dpid
-            a = man.sm[man.COWRIE_INDEX][man.SSH_INDEX]
-            b = man.sb[man.COWRIE_INDEX][man.SSH_INDEX]
-
-            if (a and b) == 0: 
-                man.sb[man.COWRIE_INDEX][man.SSH_INDEX] = 1
-                simple_switch.redirect_to_cowrie_ssh_ext(dpid, src_IP)
-                simple_switch.change_cowrie_src_ssh_ext(dpid, src_IP)
-            else:           
-                man.sb[man.HERALDING_INDEX][man.SSH_INDEX] = 1
-                simple_switch.redirect_to_heralding_ssh_ext(dpid, src_IP)
-                simple_switch.change_heralding_src_ssh_ext(dpid, src_IP)
-            return Response(status=200)
-        else:
-            return Response(status=400)
-        
+            return Response(status=400)        
             
     @route('restswitch', '/rest_controller/push_dmz_server_out', methods=['POST'])
     def push_dmz_server_out(self, req, **kwargs):

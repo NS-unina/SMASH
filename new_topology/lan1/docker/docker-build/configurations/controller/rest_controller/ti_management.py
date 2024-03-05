@@ -84,7 +84,7 @@ class HoneypotManager:
         self.sdh = [elem1 + elem2 for elem1, elem2 in zip(self.sd_h1, self.sd_h2)]
 
         # Service busy: 1 if it is busy, else 0
-        self.sb = [[1, 1, 0, 0], [1, 0, 0, 0],[1, 0, 0, 1], [1, 0, 0, 1], [1, 0, 0, 1], [1, 0, 0, 1]]
+        self.sb = [[0, 0, 0, 0], [0, 0, 0, 0],[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
 
     def add_new_honeypot_ti_management(self, new_honeypot, host, s_h, ports_h):
         # Aggiunta dell'oggetto Honeypot alla lista honeypots

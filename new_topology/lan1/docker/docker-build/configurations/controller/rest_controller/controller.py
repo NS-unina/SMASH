@@ -25,8 +25,11 @@ from network import Host, Honeypot, Attacker, Subnet, Network, Gateway
 from ryu.lib.packet import tcp, icmp, arp, ipv4, vlan
 import random
 from topology import NetworkTopology
-
+from ti_management import HoneypotManager
+import mapping as map
+import functions as f
 t = NetworkTopology()
+man = HoneypotManager()
 
 class ExampleSwitch13(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
@@ -109,6 +112,17 @@ class ExampleSwitch13(app_manager.RyuApp):
         
         eth_pkt = pkt.get_protocol(ethernet.ethernet)
         dst = eth_pkt.dst
+        ip_dst = None
+
+        # get the ipv4 destination address
+        ipv4_pkt = pkt.get_protocol(ipv4.ipv4)
+        if ipv4_pkt:
+            ip_dst = ipv4_pkt.dst
+            src_ip = ipv4_pkt.src
+
+        
+
+        decoy_ip = ["10.1.3.12"]
 
         # get the received port number from packet_in message.
         in_port = msg.match['in_port']
@@ -162,8 +176,24 @@ class ExampleSwitch13(app_manager.RyuApp):
                 out_port = t.elk_if2.get_ovs_port()
             elif dst == t.gw11.get_MAC_addr():
                 out_port = t.gw11.get_ovs_port()
+            elif dst == t.ti_host1.get_MAC_addr():
+                out_port = t.ti_host1.get_ovs_port()
+            elif dst == t.ti_host2.get_MAC_addr():
+                out_port = t.ti_host2.get_ovs_port()
 
             actions = [parser.OFPActionOutput(out_port)]
+            
+
+            # install a redirection flow
+            if ip_dst in decoy_ip and src_ip not in t.host_redirected:
+                tcp_port = "22"
+                source = t.service
+                gw= t.gw1
+                subnet = t.subnet1
+                br_dpid = t.br0_dpid
+                self.redirect_traffic (self,src_ip,tcp_port,source,gw,subnet,br_dpid)
+                print("REGOLA REDIRECTION INSERITA DIRETTAMENTE DAL CONTROLLER")               
+                #self.add_rule(datapath, ip_dst)
 
             # install a flow to avoid packet_in next time.
             if out_port != ofproto.OFPP_FLOOD:
@@ -349,6 +379,8 @@ class ExampleSwitch13(app_manager.RyuApp):
         # PERMIT tcp input to ti_host2 port 23
         self.permit_tcp_dstIP_dstPORT(parser, t.ti_host2.get_ip_addr(), t.ti_host2.get_ovs_port(), 23, datapath)
 
+        #self.forward_to_controller(parser, t.ssh_service.get_ip_addr(),datapath)
+
         # MTD PROACTIVE PORT SHUFFLING STARTING RULES
         self.redirect_protocol_syn(parser, datapath, self.port)
         self.change_heralding_src_protocol(parser, datapath, self.port)
@@ -394,6 +426,17 @@ class ExampleSwitch13(app_manager.RyuApp):
                                     [port_status_mask, port_status_mask],
                                     [flow_removed_mask, flow_removed_mask])
         datapath.send_msg(req)
+
+    # Funzione per installare una regola nello switch in modo che ogni pacchetto con ip_dst indicato venga inoltrato al controller
+    def forward_to_controller(self,parser, ip_dst,datapath):
+        
+        ofproto = datapath.ofproto
+        out_port= ofproto.OFPP_CONTROLLER
+
+        match = parser.OFPMatch(eth_type=0x0800, ipv4_dst=ip_dst)
+        actions = [parser.OFPActionOutput(out_port)]
+
+        self.add_flow(datapath, 100, match, actions, 0)    
 
     def permit_eth_dstMAC(self, parser, eth_dst, ovs_port_dest, datapath):
         actions = [parser.OFPActionOutput(ovs_port_dest)]
@@ -483,3 +526,76 @@ class ExampleSwitch13(app_manager.RyuApp):
         match = parser.OFPMatch(eth_type=0x0800, ipv4_src=t.heralding.get_ip_addr(), 
                                 eth_src=t.heralding.get_MAC_addr(), ip_proto=6, tcp_src=port)
         self.add_flow_with_hard(datapath, 1000, match, actions, 5)
+
+
+    def redirect_traffic (self, dpid,src_ip,tcp_port,source,gw,subnet,br_dpid):
+        port_index = map.index_port_mapping.get(tcp_port,None)  
+        decoy_index = u.find_free_honeypot_by_service(man.sb, man.sm, port_index)
+        if decoy_index is None:
+                print("Creazione nuovo honeypot heralding")
+                host = t.ti_host2
+                self.create_new_honeypot(host)
+                decoy_index = u.find_free_honeypot_by_service(man.sb, man.sm, port_index)
+                if(decoy_index) is None:
+                    print("Non c'è alcun honeypot cowrie disponibile")
+                    return
+        decoy = f.index_to_decoy_mapping.get (decoy_index,None)
+        print("L'honeypot libero per il servizio ", tcp_port, "è :", decoy.get_name())
+
+        destination_port = man.ports[decoy_index][port_index]
+        man.sb[decoy_index][port_index] = 1 
+        
+        print("Redirection dell'utente: ",src_ip, "del service:", source.get_ip_addr(), "All'honeypot: ", decoy.get_ip_addr(), "da porta: ", tcp_port, "to: ", destination_port)
+        t.host_redirected.append(src_ip)
+        self.redirect_to(br_dpid,src_ip,tcp_port,source,decoy,gw,destination_port)
+        self.change_decoy_src(br_dpid, src_ip,subnet,decoy,tcp_port,gw,source,destination_port)
+    
+    def create_new_honeypot(self,host):
+        index = max(man.index_honeypot.values()) + 1
+        #IL NOME SCELTO SARA DEL TIPO "heralding5"
+        name ="heralding"+str(index)
+        new_ssh_port= f.find_free_port(man.ports_host1,4000)
+        man.ports_host1.append(new_ssh_port)
+        new_ftp_port= f.find_free_port(man.ports_host1,4000)
+        man.ports_host1.append(new_ftp_port)
+        new_socks_port= f.find_free_port(man.ports_host1,4000)
+        man.ports_host1.append(new_socks_port)
+        s_hp = [1, 0, 1, 1]
+        ports_hp = [0, 0, 0, 0]
+        ports_hp[0] = new_ssh_port
+        ports_hp[1] = 0
+        ports_hp[2] = new_ftp_port
+        ports_hp[3] = new_socks_port
+        print("Porte scelte",ports_hp)
+        print("Porte host",man.ports_host1)
+        f.add_new_honeypot(name,host,s_hp,ports_hp)
+
+    def redirect_to(self, br_dpid, src_ip, tcp_port, source, destination, gw,destination_port):
+        datapath = self.switches.get(br_dpid)
+        parser = datapath.ofproto_parser
+        self.permit_tcp_host1_host2(parser, src_ip, source.get_ip_addr(), source.get_ovs_port(), datapath)
+        self.permit_tcp_host1_host2(parser, source.get_ip_addr(), destination.get_ip_addr(), destination.get_ovs_port(), datapath)
+        self.permit_tcp_dstIP_dstPORT(parser, destination.get_ip_addr(), destination.get_ovs_port(), int(destination_port), datapath)
+        actions = [
+            parser.OFPActionSetField(eth_dst=gw.get_MAC_addr()),
+            parser.OFPActionSetField(ipv4_dst=destination.get_ip_addr()),
+            parser.OFPActionSetField(tcp_dst=int(destination_port)),
+            parser.OFPActionOutput(gw.get_ovs_port())
+        ]
+        match = parser.OFPMatch(
+            eth_type=0x0800, ipv4_src=src_ip,
+            ipv4_dst=source.get_ip_addr(), ip_proto=6, tcp_dst=int(tcp_port)
+        )
+        self.add_flow(datapath, 1000, match, actions, 1)
+
+    def change_decoy_src(self, br_dpid, src_ip, subnet, decoy, tcp_port,gw,destination,destination_port):
+        datapath = self.switches.get(br_dpid)
+        parser = datapath.ofproto_parser
+        out_port = u.host_to_port(subnet, src_ip)
+        actions = [parser.OFPActionSetField(ipv4_src=destination.get_ip_addr()),
+                   parser.OFPActionSetField(eth_src=destination.get_MAC_addr()),
+                   parser.OFPActionSetField(tcp_src=int(tcp_port)),
+                   parser.OFPActionOutput(out_port)]
+        match = parser.OFPMatch(eth_type=0x0800, ipv4_src=decoy.get_ip_addr(), ipv4_dst=src_ip, 
+                                eth_src= gw.get_MAC_addr(), ip_proto=6, tcp_src=int(destination_port))                
+        self.add_flow(datapath, 1000, match, actions, 1)
