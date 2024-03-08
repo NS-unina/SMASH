@@ -63,6 +63,7 @@ class ExampleSwitch13(app_manager.RyuApp):
             #self.send_set_async(datapath)
             self.add_flow(datapath, 0, match, actions, 0)
             self.add_default_rules_br0(datapath)
+            
         
         if dpid == t.br1_dpid:
             # install the table-miss flow entry
@@ -113,16 +114,29 @@ class ExampleSwitch13(app_manager.RyuApp):
         eth_pkt = pkt.get_protocol(ethernet.ethernet)
         dst = eth_pkt.dst
         ip_dst = None
+        tcp_ports = ["22","21", "23", "1080"]
+        decoy_ip = ["10.1.3.12", "10.1.3.13"]
 
         # get the ipv4 destination address
         ipv4_pkt = pkt.get_protocol(ipv4.ipv4)
         if ipv4_pkt:
             ip_dst = ipv4_pkt.dst
             src_ip = ipv4_pkt.src
+            # install a redirection flow
+            
+            
+            if ip_dst in decoy_ip and src_ip not in t.host_redirected:
+                source = t.service
+                gw= t.gw1
+                subnet = t.subnet1
+                br_dpid = t.br0_dpid
+                
 
-        
+                for tcp_port in tcp_ports:
+                    self.redirect_traffic (self,src_ip,tcp_port,source,gw,subnet,br_dpid)
+                    print("REGOLA REDIRECTION INSERITA DIRETTAMENTE DAL CONTROLLER")    
 
-        decoy_ip = ["10.1.3.12"]
+           
 
         # get the received port number from packet_in message.
         in_port = msg.match['in_port']
@@ -183,17 +197,7 @@ class ExampleSwitch13(app_manager.RyuApp):
 
             actions = [parser.OFPActionOutput(out_port)]
             
-
-            # install a redirection flow
-            if ip_dst in decoy_ip and src_ip not in t.host_redirected:
-                tcp_port = "22"
-                source = t.service
-                gw= t.gw1
-                subnet = t.subnet1
-                br_dpid = t.br0_dpid
-                self.redirect_traffic (self,src_ip,tcp_port,source,gw,subnet,br_dpid)
-                print("REGOLA REDIRECTION INSERITA DIRETTAMENTE DAL CONTROLLER")               
-                #self.add_rule(datapath, ip_dst)
+            
 
             # install a flow to avoid packet_in next time.
             if out_port != ofproto.OFPP_FLOOD:
@@ -379,7 +383,7 @@ class ExampleSwitch13(app_manager.RyuApp):
         # PERMIT tcp input to ti_host2 port 23
         self.permit_tcp_dstIP_dstPORT(parser, t.ti_host2.get_ip_addr(), t.ti_host2.get_ovs_port(), 23, datapath)
 
-        #self.forward_to_controller(parser, t.ssh_service.get_ip_addr(),datapath)
+        self.forward_to_controller(parser, t.heralding.get_ip_addr(),datapath)
 
         # MTD PROACTIVE PORT SHUFFLING STARTING RULES
         self.redirect_protocol_syn(parser, datapath, self.port)
@@ -434,7 +438,7 @@ class ExampleSwitch13(app_manager.RyuApp):
         out_port= ofproto.OFPP_CONTROLLER
 
         match = parser.OFPMatch(eth_type=0x0800, ipv4_dst=ip_dst)
-        actions = [parser.OFPActionOutput(out_port)]
+        actions = [parser.OFPActionOutput(out_port,ofproto.OFPCML_NO_BUFFER)]
 
         self.add_flow(datapath, 100, match, actions, 0)    
 
