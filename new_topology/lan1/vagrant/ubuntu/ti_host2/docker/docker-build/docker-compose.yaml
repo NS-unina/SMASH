@@ -2,63 +2,9 @@ version: "3"
 
 services:
 
-    heralding8:
+    heralding4:
         build: ./images/heralding_imm
-        container_name: heralding8
-        cap_add:
-        - NET_ADMIN 
-        tty: true
-        stdin_open: true
-        privileged: true
-        volumes:
-        - ./configurations/heralding:/home
-        networks:
-          my_network:
-            ipv4_address: 172.28.0.22
-        ports:
-          - "4006:22"  
-          - "4007:21" 
-          - "4008:1080"
-
-    heralding7:
-        build: ./images/heralding_imm
-        container_name: heralding7
-        cap_add:
-        - NET_ADMIN 
-        tty: true
-        stdin_open: true
-        privileged: true
-        volumes:
-        - ./configurations/heralding:/home
-        networks:
-          my_network:
-            ipv4_address: 172.28.0.21
-        ports:
-          - "4003:22"  
-          - "4004:21" 
-          - "4005:1080"
-
-    heralding6:
-        build: ./images/heralding_imm
-        container_name: heralding6
-        cap_add:
-        - NET_ADMIN 
-        tty: true
-        stdin_open: true
-        privileged: true
-        volumes:
-        - ./configurations/heralding:/home
-        networks:
-          my_network:
-            ipv4_address: 172.28.0.20
-        ports:
-          - "4000:22"  
-          - "4001:21" 
-          - "4002:1080"
-
-    heralding2:
-        build: ./images/heralding_imm
-        container_name: heralding2
+        container_name: heralding4
         cap_add:
         - NET_ADMIN 
         tty: true
@@ -74,9 +20,9 @@ services:
           - "2021:21"  # Port forwarding dalla porta 2021 dell'host alla porta 21 del container
           - "2080:1080"  # Port forwarding dalla porta 2080 dell'host alla porta 1080 del container
 
-    heralding:
+    heralding3:
         build: ./images/heralding_imm
-        container_name: heralding
+        container_name: heralding3
         cap_add:
           - NET_ADMIN 
         tty: true

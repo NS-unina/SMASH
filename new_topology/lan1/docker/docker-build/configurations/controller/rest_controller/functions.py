@@ -17,6 +17,37 @@ index_to_decoy_mapping = {
     5: t.heralding4,
 }
 
+def add_new_host(name, subnet, mac,ip_address): 
+    url = 'http://localhost:8080/handle_post'  # URL host
+    # Dati da inviare nel corpo della richiesta
+    payload = {'subnet': subnet,  'mac':mac,'ip':ip_address }  
+
+    #INVIO EVENTO A HOST PER DEPLOYARE UN NUOVO HOST
+    response = requests.post(url, data=payload)
+
+    if response.status_code == 200:
+        print("200 OK, Honeypot creato con successo")
+         # Analizza la risposta JSON
+        json_response = response.json()
+    
+        # Accedi a un parametro specifico
+        ovs_port = json_response['ovs_port']
+    else:
+        print("Si è verificato un errore durante l'invio della richiesta:", response.status_code)
+        print("Messaggio di errore:", response.text)
+    
+    # Crea un nuovo oggetto Honeypot
+    netmask= "255.255.255.0"    
+    new_host = Host(name, ip_address, mac, ovs_port, netmask)
+    # Lo aggiunge alla lista di tutti gli honeypot attivi
+    t.hosts_list.append(new_host)
+
+
+    man.add_new_host_ti_management(new_host)
+
+    return new_host
+
+
 def add_new_honeypot(name,host,s_hp,ports_hp): 
     url = 'http://' + host.get_ip_addr() + ':8080/handle_post'  # URL host
     # Dati da inviare nel corpo della richiesta

@@ -49,7 +49,7 @@ class HoneypotManager:
         # Lista di honeypots
         self.honeypots = [t.cowrie1, t.cowrie2, t.heralding1, t.heralding2, t.heralding3, t.heralding4]
 
-        # Vettore per il mapping dei servizi sui host
+        # Vettore per il mapping degli honeypot sui host
         self.h_h1 = [1, 0, 1, 1, 0, 0]
         self.h_h2 = [0, 1, 0, 0, 1, 1]
 
@@ -84,7 +84,7 @@ class HoneypotManager:
         self.sdh = [elem1 + elem2 for elem1, elem2 in zip(self.sd_h1, self.sd_h2)]
 
         # Service busy: 1 if it is busy, else 0
-        self.sb = [[0, 0, 0, 0], [0, 0, 0, 0],[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+        self.sb = [[1, 0, 0, 0], [1, 0, 0, 0],[1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0], [0, 0, 0, 0]]
 
     def add_new_honeypot_ti_management(self, new_honeypot, host, s_h, ports_h):
         # Aggiunta dell'oggetto Honeypot alla lista honeypots
@@ -113,3 +113,12 @@ class HoneypotManager:
         # Aggiunta in sb
         busy_service = [0, 0, 0, 0]
         self.sb.append(busy_service)
+
+    def add_new_host_ti_management(self,host, honeypots, s_h, ports_h):
+        # AGGIUNTA DI UN NUOVO HOST
+        self.hosts.append(host)
+        # IL NUOVO HOST AVRÀ UN HONEYPOT COWRIE
+
+        
+        self.honeypots()
+

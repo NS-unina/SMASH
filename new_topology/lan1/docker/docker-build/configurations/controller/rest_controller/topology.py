@@ -33,6 +33,7 @@ class NetworkTopology:
         self.heralding4 = Honeypot('heralding4', '10.1.4.17', '08:00:27:6d:ec:c4', 25, '255.255.255.0')
 
         self.honeypots_list = [self.cowrie1, self.cowrie2, self.heralding1, self.heralding2, self.heralding3, self.heralding4]
+        self.hosts_list= [self.ti_host1, self.ti_host2]
         self.host_redirected = []
 
         self.elk_if1 = Host('ELK_IF1', '10.1.5.10', '08:00:27:7d:b7:b8', 8, '255.255.255.0')
