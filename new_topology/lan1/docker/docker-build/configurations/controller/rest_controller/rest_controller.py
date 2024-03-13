@@ -1,4 +1,5 @@
 import json
+import asyncio
 
 from controller import ExampleSwitch13
 from webob import Response
@@ -26,8 +27,6 @@ name = 'rest_controller'
 url = '/rest_controller/insert'
 sub = '10.1.3.'
 ips = []
-
-
 
 
 
@@ -68,6 +67,25 @@ class RestController(ExampleSwitch13):
         print("Porte scelte",ports_hp)
         print("Porte host",man.ports_host1)
         f.add_new_honeypot(name,host,s_hp,ports_hp)
+    
+    def create_new_host_cowrie(self):
+        index = max(man.index_honeypot.values()) + 1
+        
+        #IL NOME SCELTO SARA DEL TIPO "cowrie5"
+        name ="cowrie"+str(index)
+        man.index_honeypot[name] = index
+
+
+        s_hp = [1, 1, 0, 0]
+        ports_hp = [22, 23, 0, 0]
+        subnet = "10.1.4.0/24"
+        
+        mac = t.find_free_mac_address()
+        ip_address = t.find_free_ip_address(subnet)
+        new_host = f.add_new_host(name,subnet,mac,ip_address)
+    
+        #UNA VOLTA CREATO L'HOST AGGIUNGO UN HONEYPOT COWRIE A QUELL HOST
+        #f.add_new_honeypot(name,new_host,s_hp,ports_hp)
 
     def redirect_to(self, dpid, src_ip, tcp_port, source, destination, gw,destination_port):
         datapath = self.switches.get(dpid)
@@ -115,6 +133,14 @@ class SimpleSwitchController(ControllerBase):
     def __init__(self, req, link, data, **config):
         super(SimpleSwitchController, self).__init__(req, link, data, **config)
         self.simple_switch_app = data[name]
+
+    @route('restswitch', '/rest_controller/test', methods=['POST'])
+    def test(self, req, **kwargs):
+        print("OK")
+        simple_switch = self.simple_switch_app
+        simple_switch.create_new_host_cowrie()
+
+
 
     @route('restswitch', '/rest_controller/redirect_traffic', methods=['POST'])
     def redirect_traffic(self, req, **kwargs):
@@ -245,3 +271,5 @@ class SimpleSwitchController(ControllerBase):
                 return Response(status=200)
             else:
                 return Response(status=400)
+            
+

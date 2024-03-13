@@ -1,5 +1,6 @@
 from network import Host, Honeypot, Attacker, Subnet, Network, Gateway
-
+import random
+import ipaddress
 #------- NETWORK TOPOLPOGY LAN1 -------------------------------------------------------------- #    
 # Nodes
 class NetworkTopology:
@@ -45,6 +46,8 @@ class NetworkTopology:
         self.dmz_cowrie = Honeypot('dmz_cowrie', '10.1.10.13', '08:00:27:b7:0e:59', 20, '255.255.255.0')
         self.dmz_host = Host('dmz_host', '10.1.10.12', '08:00:27:b6:d0:68', 23, '255.255.255.0')
 
+        self.nodes = [self.elk_if1,self.elk_if2,self.dmz_heralding,self.dmz_service,self.dmz_service1,self.dmz_cowrie,self.dmz_host]
+
         # Subnets
         # ovs1
         self.subnet1 = Subnet('S1', '10.1.3.0', '255.255.255.0')
@@ -72,6 +75,12 @@ class NetworkTopology:
 
         # Aggiungi subnet alle reti
         self.add_subnets_to_networks()
+
+        new_mac = self.find_free_mac_address()
+        new_ip = self.find_free_ip_address("10.1.4.0/24")
+
+        print("NEW MAC:", new_mac)
+        print("NEW IP:", new_ip)
 
         self.ports = [5432, 143, 5900, 3306]
         self.br0_dpid = 64105189026373
@@ -120,3 +129,51 @@ class NetworkTopology:
 
         self.network2.add_subnet(self.subnet4)
         self.network2.add_subnet(self.subnet5)
+
+
+    def find_free_mac_address(self):
+        # Lista di tutti i MAC address utilizzati
+        used_mac_addresses = set()
+
+        # Esamina tutti i nodi nella topologia
+        for node in self.honeypots_list + self.hosts_list + self.nodes:
+            used_mac_addresses.add(node.get_MAC_addr())
+
+        # Crea tre coppie casuali di caratteri per il suffisso del MAC address
+        random_suffix_pairs = ["".join(random.choice("0123456789abcdef") for _ in range(2)) for _ in range(3)]
+
+        # Combina le coppie casuali con i puntini
+        random_suffix = ":".join(random_suffix_pairs)
+
+        # Combina il prefisso fisso con la parte casuale
+        mac_address = "08:00:27:" + random_suffix
+
+        # Crea un MAC address casuale finché non trovi uno non utilizzato
+        while mac_address in used_mac_addresses:
+            # Rigenera il suffisso casuale
+            random_suffix_pairs = ["".join(random.choice("0123456789abcdef") for _ in range(2)) for _ in range(3)]
+            random_suffix = ":".join(random_suffix_pairs)
+            mac_address = "08:00:27:" + random_suffix
+
+        return mac_address
+    
+    def find_free_ip_address(self,subnet_str):
+        # Lista di tutti gli ip address utilizzati
+        used_ip_addresses = set()
+
+        # Esamina tutti i nodi nella topologia
+        for node in self.honeypots_list + self.hosts_list + self.nodes:
+            used_ip_addresses.add(node.get_ip_addr())
+
+        # Parsa la stringa della sottorete per ottenere l'oggetto di tipo ipaddress.IPv4Network
+        subnet = ipaddress.IPv4Network(subnet_str)
+        # Ottieni tutti gli indirizzi IP utilizzabili nella sottorete (escludendo indirizzo di rete e di broadcast)
+        usable_ips = [str(ip) for ip in subnet.hosts()]
+        # Genera un indirizzo IP casuale tra quelli utilizzabili
+        random_ip = random.choice(usable_ips)
+
+        while random_ip in used_ip_addresses:
+            # Rigenera un indirizzo IP casuale tra quelli utilizzabili
+            random_ip = random.choice(usable_ips)
+            
+        return random_ip

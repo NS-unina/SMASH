@@ -1,5 +1,7 @@
 from topology import NetworkTopology
 import requests
+import asyncio
+import aiohttp
 import mapping as map
 from ti_management import HoneypotManager
 
@@ -18,20 +20,22 @@ index_to_decoy_mapping = {
 }
 
 def add_new_host(name, subnet, mac,ip_address): 
-    url = 'http://localhost:8080/handle_post'  # URL host
+    url = 'http://10.1.3.1:8080/handle_post'  # URL host
     # Dati da inviare nel corpo della richiesta
-    payload = {'subnet': subnet,  'mac':mac,'ip':ip_address }  
+    payload = {'name':name, 'subnet': subnet,  'mac':mac,'ip':ip_address }  
 
     #INVIO EVENTO A HOST PER DEPLOYARE UN NUOVO HOST
     response = requests.post(url, data=payload)
 
     if response.status_code == 200:
-        print("200 OK, Honeypot creato con successo")
+        print("200 OK, HOST creato con successo")
          # Analizza la risposta JSON
         json_response = response.json()
     
-        # Accedi a un parametro specifico
+        # recupero l'ovs_port
         ovs_port = json_response['ovs_port']
+
+        print("La ovs port: ", ovs_port)
     else:
         print("Si è verificato un errore durante l'invio della richiesta:", response.status_code)
         print("Messaggio di errore:", response.text)
@@ -43,7 +47,7 @@ def add_new_host(name, subnet, mac,ip_address):
     t.hosts_list.append(new_host)
 
 
-    man.add_new_host_ti_management(new_host)
+    #man.add_new_host_ti_management(new_host)
 
     return new_host
 

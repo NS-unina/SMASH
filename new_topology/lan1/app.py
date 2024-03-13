@@ -1,22 +1,33 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import os
 import subprocess
+import random
 
 app = Flask(__name__)
 
 # 172.28.0.2 172.28.0.3
 #ip_address_container = [2,3]
 
+occupied_port = [3200,3201,3202,3203,3204,3205,3206,3207,3208,3209,3210,3211,3212,3213]
+
 @app.route('/handle_post', methods=['POST'])
 def handle_post():
     # Esegui lo script Bash quando viene ricevuta una richiesta POST
-    subnet = "10.1.4.0/24"
-    mac = "0800276dedc2"
-    name="cowrie7"
-    ip_address = "10.1.4.60"
-    ssh_port = "3426"
+    name = request.form.get('name')
+    subnet = request.form.get('subnet')
+    mac = request.form.get('mac')
+    mac_formatted = mac.replace(":", "")
+    ip_address = request.form.get('ip')
+    # Genera un numero casuale tra 3200 e 4000
+    ssh_port = random.randint(3200, 4000)
 
-    #name = request.form.get('name')
+    # Controlla se il numero casuale generato è presente nella lista occupied_port
+    while ssh_port in occupied_port:
+        ssh_port = random.randint(3200, 4000)
+
+    occupied_port.append(ssh_port)
+
+    
     #ip = find_free_address(ip_address_container, 20)
     #print("IP interno:", ip)
     #ssh_port = request.form.get('ssh_port')
@@ -27,13 +38,28 @@ def handle_post():
     script_path = os.path.join(current_directory, 'script.sh')
     
     # Lista di parametri da passare allo script
-    parameters = [subnet, mac,name, ip_address, ssh_port]
+    parameters = [subnet, mac_formatted,name, ip_address, str(ssh_port)]
+
+    # Esegui lo script Bash in modo non bloccante
+    process = subprocess.Popen([script_path] + parameters, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    # Attendi il completamento del processo e acquisisci l'output
+    stdout, stderr = process.communicate()
+
+    # Ottieni il risultato
+    result = stdout.decode('utf-8')
+
+    print("IL risultato è: ", result)
+     # Costruisci la risposta JSON
+    response_data = {
+        "status": 200,  
+        "message": "Script eseguito con successo",
+        "ovs_port": result,
+    }
     
-    # Esegui lo script Bash quando viene ricevuta una richiesta POST
-    result=subprocess.check_output([script_path] + parameters, text=True)
-    print(result)
-    #subprocess.call(script_path)
-    return "Script eseguito con successo", 200
+    # Invia la risposta JSON
+    return jsonify(response_data)
+
 
 def find_free_address(address_list, start_address):
     # Itera attraverso le porte nella lista a partire dalla porta specificata

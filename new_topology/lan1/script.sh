@@ -37,8 +37,6 @@ ofport=$(generate_ofport "$bridge")
 #vm_name=$(generate_vm_name)
 #ip_address=$(find_free_ip3 "$subnet" "$occupied_ips")
 #free_port=$(find_free_port "$occupied_ports")
-echo "Indirizzo IP libero trovato: $ip_address"
-echo "Numero di porta libero trovato: $free_port"
 #echo "$ip_address" >> "$occupied_ips"
 #echo "$free_port" >> "$occupied_ports"
 #TAP create_tap(tap_name, bridge_name, tag, ofport)
@@ -46,14 +44,14 @@ create_tap "$tap_name" "$bridge" "$tag" "$ofport"
 
 tap_ofport=$(sudo ovs-vsctl get Interface "$tap_name" ofport)
 
-config_string="    deploy_honeyfarm_runtime(config, \"$vm_name\", \"ubuntu/focal64\", \"1024\",\"ext_cowrie\", 22, \"$free_port\",\"ssh\", \"$tap_name\", \"$mac_tap\", \"$ip_address\", $routes,\"$gateway\")"
+config_string="    deploy_honeyfarm_runtime(config, \"$vm_name\", \"ubuntu/focal64\", \"1024\",\"ext_cowrie\", 22, $free_port,\"ssh\", \"$tap_name\", \"$mac_tap\", \"$ip_address\", $routes,\"$gateway\")"
 
 sed -i "/# HONEYPOT FARM/a\\
 ${config_string}" "${vagrant_file}"
 
 cd vagrant/ubuntu
 
-vagrant up "$vm_name"
+vagrant up "$vm_name" > /dev/null 2>&1
 
 echo "$tap_ofport"
 
