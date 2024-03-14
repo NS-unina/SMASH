@@ -64,16 +64,13 @@ class RestController(ExampleSwitch13):
         ports_hp[1] = 0
         ports_hp[2] = new_ftp_port
         ports_hp[3] = new_socks_port
-        print("Porte scelte",ports_hp)
-        print("Porte host",man.ports_host1)
         f.add_new_honeypot(name,host,s_hp,ports_hp)
     
     def create_new_host_cowrie(self):
-        index = max(man.index_honeypot.values()) + 1
+        index = max(man.index_host.values()) + 2
         
-        #IL NOME SCELTO SARA DEL TIPO "cowrie5"
-        name ="cowrie"+str(index)
-        man.index_honeypot[name] = index
+        #IL NOME SCELTO SARA DEL TIPO "ti_host3"
+        name ="ti_host"+str(index)
 
 
         s_hp = [1, 1, 0, 0]
@@ -82,14 +79,41 @@ class RestController(ExampleSwitch13):
         
         mac = t.find_free_mac_address()
         ip_address = t.find_free_ip_address(subnet)
-        new_host = f.add_new_host(name,subnet,mac,ip_address)
-    
+        host = f.add_new_host(name,subnet,mac,ip_address)
         #UNA VOLTA CREATO L'HOST AGGIUNGO UN HONEYPOT COWRIE A QUELL HOST
-        #f.add_new_honeypot(name,new_host,s_hp,ports_hp)
+
+        index_honeypot = max(man.index_honeypot.values()) + 1
+        #IL NOME SCELTO SARA DEL TIPO "heralding5"
+        name_honeypot ="cowrie"+str(index_honeypot)
+        # Crea un nuovo oggetto Honeypot
+        new_honeypot = Honeypot(name_honeypot, host.get_ip_addr(), host.get_MAC_addr(), host.get_ovs_port(), host.get_netmask())
+        # Lo aggiunge alla lista di tutti gli honeypot attivi
+        t.honeypots_list.append(new_honeypot)
+
+        # Aggiorna dizionario decoy_mapping aggiungendo una nuova entry con chiave il nome dell'honeypot e valore l'ultimo honeypot nella lista
+        map.decoy_mapping[new_honeypot.get_name()] = t.honeypots_list[-1]
+
+
+        # Aggiorna dizionario index_mapping aggiungendo una nuova entry con chiave il valore massimo delle chiavi +1 e valore l'ultimo honeypot nella lista
+        new_key = max(f.index_to_decoy_mapping.keys()) + 1
+        f.index_to_decoy_mapping[new_key] = t.honeypots_list[-1]
+
+        man.add_new_honeypot_ti_management(new_honeypot,host,s_hp,ports_hp)
+
+        print("Nuovo host creato:", t.hosts_list[-1].get_name(), "con ip: ", t.hosts_list[-1].get_ip_addr())
+        print("Nuovo Honeypot creato:", t.honeypots_list[-1].get_name(), "con ip: ", t.honeypots_list[-1].get_ip_addr())
+
+        print("Matrice H", man.h)
+        print("Matrice SM", man.sm)
+        print("Matrice ports", man.ports)
+        print("Matrice sdh", man.sdh)
+        print("Matrice busy", man.sb)
+
 
     def redirect_to(self, dpid, src_ip, tcp_port, source, destination, gw,destination_port):
         datapath = self.switches.get(dpid)
         parser = datapath.ofproto_parser
+        
         self.permit_tcp_host1_host2(parser, src_ip, source.get_ip_addr(), source.get_ovs_port(), datapath)
         self.permit_tcp_host1_host2(parser, source.get_ip_addr(), destination.get_ip_addr(), destination.get_ovs_port(), datapath)
         self.permit_tcp_dstIP_dstPORT(parser, destination.get_ip_addr(), destination.get_ovs_port(), int(destination_port), datapath)
@@ -166,13 +190,17 @@ class SimpleSwitchController(ControllerBase):
             # Trova il primo honeypot libero per quel servizio
             decoy_index = u.find_free_honeypot_by_service(man.sb, man.sm, port_index)           
             #Da testare
-            if decoy_index is None:
+            if decoy_index is None and tcp_port != "23":
                 print("Creazione nuovo honeypot heralding")
                 host = t.ti_host2
                 simple_switch.create_new_honeypot(host)
                 decoy_index = u.find_free_honeypot_by_service(man.sb, man.sm, port_index)
+            elif decoy_index is None and tcp_port == "23": 
+                print("Creazione nuovo host cowrie")
+                simple_switch.create_new_host_cowrie()
+                decoy_index = u.find_free_honeypot_by_service(man.sb, man.sm, port_index)
                 if(decoy_index) is None:
-                    print("Non c'è alcun honeypot cowrie disponibile")
+                    print("Non è stato possibile creare un nuovo honeypot")
                     return Response(status=400)
 
             

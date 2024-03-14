@@ -535,14 +535,20 @@ class ExampleSwitch13(app_manager.RyuApp):
     def redirect_traffic (self, dpid,src_ip,tcp_port,source,gw,subnet,br_dpid):
         port_index = map.index_port_mapping.get(tcp_port,None)  
         decoy_index = u.find_free_honeypot_by_service(man.sb, man.sm, port_index)
-        if decoy_index is None:
-                print("Creazione nuovo honeypot heralding")
-                host = t.ti_host2
-                self.create_new_honeypot(host)
-                decoy_index = u.find_free_honeypot_by_service(man.sb, man.sm, port_index)
-                if(decoy_index) is None:
-                    print("Non c'è alcun honeypot cowrie disponibile")
-                    return
+
+
+        if decoy_index is None and tcp_port != "23":
+            print("Creazione nuovo honeypot heralding")
+            host = t.ti_host2
+            self.create_new_honeypot(host)
+            decoy_index = u.find_free_honeypot_by_service(man.sb, man.sm, port_index)
+        elif decoy_index is None and tcp_port == "23": 
+            print("Creazione nuovo host cowrie")
+            self.create_new_host_cowrie()
+            decoy_index = u.find_free_honeypot_by_service(man.sb, man.sm, port_index)
+            if(decoy_index) is None:
+                print("Non è stato possibile creare un nuovo honeypot")
+                return
         decoy = f.index_to_decoy_mapping.get (decoy_index,None)
         print("L'honeypot libero per il servizio ", tcp_port, "è :", decoy.get_name())
 
@@ -574,6 +580,52 @@ class ExampleSwitch13(app_manager.RyuApp):
         print("Porte host",man.ports_host1)
         f.add_new_honeypot(name,host,s_hp,ports_hp)
 
+    def create_new_host_cowrie(self):
+        index = max(man.index_host.values()) + 2
+        
+        #IL NOME SCELTO SARA DEL TIPO "ti_host3"
+        name ="ti_host"+str(index)
+
+        print(name)
+
+
+        s_hp = [1, 1, 0, 0]
+        ports_hp = [22, 23, 0, 0]
+        subnet = "10.1.4.0/24"
+        
+        mac = t.find_free_mac_address()
+        ip_address = t.find_free_ip_address(subnet)
+        host = f.add_new_host(name,subnet,mac,ip_address)
+        #UNA VOLTA CREATO L'HOST AGGIUNGO UN HONEYPOT COWRIE A QUELL HOST
+
+        index_honeypot = max(man.index_honeypot.values()) + 1
+        #IL NOME SCELTO SARA DEL TIPO "heralding5"
+        name_honeypot ="cowrie"+str(index_honeypot)
+        # Crea un nuovo oggetto Honeypot
+        new_honeypot = Honeypot(name_honeypot, host.get_ip_addr(), host.get_MAC_addr(), host.get_ovs_port(), host.get_netmask())
+        # Lo aggiunge alla lista di tutti gli honeypot attivi
+        t.honeypots_list.append(new_honeypot)
+
+        # Aggiorna dizionario decoy_mapping aggiungendo una nuova entry con chiave il nome dell'honeypot e valore l'ultimo honeypot nella lista
+        map.decoy_mapping[new_honeypot.get_name()] = t.honeypots_list[-1]
+
+
+        # Aggiorna dizionario index_mapping aggiungendo una nuova entry con chiave il valore massimo delle chiavi +1 e valore l'ultimo honeypot nella lista
+        new_key = max(f.index_to_decoy_mapping.keys()) + 1
+        f.index_to_decoy_mapping[new_key] = t.honeypots_list[-1]
+
+        man.add_new_honeypot_ti_management(new_honeypot,host,s_hp,ports_hp)
+
+        print("Nuovo host creato:", t.hosts_list[-1].get_name(), "con ip: ", t.hosts_list[-1].get_ip_addr())
+        print("Nuovo Honeypot creato:", t.honeypots_list[-1].get_name(), "con ip: ", t.honeypots_list[-1].get_ip_addr())
+
+        print("Matrice H", man.h)
+        print("Matrice SM", man.sm)
+        print("Matrice ports", man.ports)
+        print("Matrice sdh", man.sdh)
+        print("Matrice busy", man.sb)
+    
+
     def redirect_to(self, br_dpid, src_ip, tcp_port, source, destination, gw,destination_port):
         datapath = self.switches.get(br_dpid)
         parser = datapath.ofproto_parser
@@ -603,3 +655,6 @@ class ExampleSwitch13(app_manager.RyuApp):
         match = parser.OFPMatch(eth_type=0x0800, ipv4_src=decoy.get_ip_addr(), ipv4_dst=src_ip, 
                                 eth_src= gw.get_MAC_addr(), ip_proto=6, tcp_src=int(destination_port))                
         self.add_flow(datapath, 1000, match, actions, 1)
+
+
+    

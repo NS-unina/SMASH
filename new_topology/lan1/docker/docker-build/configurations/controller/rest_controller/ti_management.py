@@ -44,6 +44,11 @@ class HoneypotManager:
             "SOCKS5_INDEX": 3,
         }
 
+        self.index_host = {
+            "ti_host1": 0,
+            "ti_host2": 1,
+        }
+
         # Lista di host
         self.hosts = [t.ti_host1, t.ti_host2]
         # Lista di honeypots
@@ -52,6 +57,8 @@ class HoneypotManager:
         # Vettore per il mapping degli honeypot sui host
         self.h_h1 = [1, 0, 1, 1, 0, 0]
         self.h_h2 = [0, 1, 0, 0, 1, 1]
+
+        self.h = [self.h_h1, self.h_h2]
 
         # Lista di servizi
         self.services = ["ssh", "telnet", "ftp", "socks5"]
@@ -78,13 +85,14 @@ class HoneypotManager:
         self.ports_host1 = [22, 23, 2022, 2021, 2080, 3022, 3021, 3080]
         self.ports_host2 = [22, 23, 2022, 2021, 2080, 3022, 3021, 3080]
 
-        # Service distribution on a host hk
-        self.sd_h1 = u.product_vector_matrix(self.h_h1, self.sm)
-        self.sd_h2 = u.product_vector_matrix(self.h_h2, self.sm)
-        self.sdh = [elem1 + elem2 for elem1, elem2 in zip(self.sd_h1, self.sd_h2)]
+        self.sdh1 = []
+        for row in self.h:
+            self.sdh1.append(u.product_vector_matrix(row, self.sm))
 
+        self.sdh = [sum(elements) for elements in zip(*self.sdh1)]
+    
         # Service busy: 1 if it is busy, else 0
-        self.sb = [[1, 0, 0, 0], [1, 0, 0, 0],[1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0], [0, 0, 0, 0]]
+        self.sb = [[0, 1, 0, 0], [0, 1, 0, 0],[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
 
     def add_new_honeypot_ti_management(self, new_honeypot, host, s_h, ports_h):
         # Aggiunta dell'oggetto Honeypot alla lista honeypots
@@ -93,13 +101,14 @@ class HoneypotManager:
         # Trova l'ultimo valore indice è anche il massimo
         last_index = max(self.index_honeypot.values())
         self.index_honeypot[new_honeypot.get_name()] = last_index + 1
-        # Aggiunta alla lista h_h1 e h_h2
-        if host == t.ti_host1:
-            self.h_h1.append(1)
-            self.h_h2.append(0)
-        if host == t.ti_host2:
-            self.h_h1.append(0)
-            self.h_h2.append(1)
+        # Aggiunta alla lista h
+        index = self.index_host.get(host.get_name(),None)
+        for row in self.h:
+            if self.h.index(row) == index:
+                row.append(1)
+            else:
+                row.append(0)
+   
         #aggiunge service map dell'honeypot a matrice SM
         self.sm.append(s_h)
 
@@ -107,18 +116,22 @@ class HoneypotManager:
         self.ports.append(ports_h)
 
         # Ricalcolo SDH
-        self.sd_h1 = u.product_vector_matrix(self.h_h1, self.sm)
-        self.sd_h2 = u.product_vector_matrix(self.h_h2, self.sm)
-        self.sdh = [elem1 + elem2 for elem1, elem2 in zip(self.sd_h1, self.sd_h2)]
+        self.sdh1 = []
+        for row in self.h:
+            self.sdh1.append(u.product_vector_matrix(row, self.sm))
+
+        self.sdh = [sum(elements) for elements in zip(*self.sdh1)]
         # Aggiunta in sb
         busy_service = [0, 0, 0, 0]
         self.sb.append(busy_service)
 
-    def add_new_host_ti_management(self,host, honeypots, s_h, ports_h):
+    def add_new_host_ti_management(self,host):
         # AGGIUNTA DI UN NUOVO HOST
         self.hosts.append(host)
-        # IL NUOVO HOST AVRÀ UN HONEYPOT COWRIE
+        num_honeypots = len(self.honeypots)
+        self.h_h3  = [0] * num_honeypots
+        self.h.append(self.h_h3)
 
-        
-        self.honeypots()
+        new_value = max(self.index_host.values()) + 1
+        self.index_host[host.get_name()] = new_value
 

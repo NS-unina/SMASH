@@ -35,7 +35,7 @@ class NetworkTopology:
 
         self.honeypots_list = [self.cowrie1, self.cowrie2, self.heralding1, self.heralding2, self.heralding3, self.heralding4]
         self.hosts_list= [self.ti_host1, self.ti_host2]
-        self.host_redirected = []
+        self.host_redirected = ["10.1.5.1"]
 
         self.elk_if1 = Host('ELK_IF1', '10.1.5.10', '08:00:27:7d:b7:b8', 8, '255.255.255.0')
         self.elk_if2 = Host('ELK_IF2', '10.1.11.10', '08:00:27:f5:6b:90', 13, '255.255.255.0')
@@ -75,12 +75,6 @@ class NetworkTopology:
 
         # Aggiungi subnet alle reti
         self.add_subnets_to_networks()
-
-        new_mac = self.find_free_mac_address()
-        new_ip = self.find_free_ip_address("10.1.4.0/24")
-
-        print("NEW MAC:", new_mac)
-        print("NEW IP:", new_ip)
 
         self.ports = [5432, 143, 5900, 3306]
         self.br0_dpid = 64105189026373

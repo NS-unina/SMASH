@@ -42,12 +42,13 @@ def add_new_host(name, subnet, mac,ip_address):
     
     # Crea un nuovo oggetto Honeypot
     netmask= "255.255.255.0"    
-    new_host = Host(name, ip_address, mac, ovs_port, netmask)
+    new_host = Host(name, ip_address, mac, int(ovs_port), netmask)
     # Lo aggiunge alla lista di tutti gli honeypot attivi
     t.hosts_list.append(new_host)
 
 
-    #man.add_new_host_ti_management(new_host)
+    man.add_new_host_ti_management(new_host)
+
 
     return new_host
 
@@ -72,7 +73,7 @@ def add_new_honeypot(name,host,s_hp,ports_hp):
     t.honeypots_list.append(new_honeypot)
 
     # Aggiorna dizionario decoy_mapping aggiungendo una nuova entry con chiave il nome dell'honeypot e valore l'ultimo honeypot nella lista
-    map.decoy_mapping[new_honeypot.get_name] = t.honeypots_list[-1]
+    map.decoy_mapping[new_honeypot.get_name()] = t.honeypots_list[-1]
 
 
     # Aggiorna dizionario index_mapping aggiungendo una nuova entry con chiave il valore massimo delle chiavi +1 e valore l'ultimo honeypot nella lista
