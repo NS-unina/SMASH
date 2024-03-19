@@ -6,4 +6,5 @@ RUN apt-get install -y iproute2
 RUN apt-get install -y iputils-ping
 RUN pip install randmac
 RUN pip install ryu
+RUN pip3 install aiohttp
 RUN pip install eventlet==0.30.2

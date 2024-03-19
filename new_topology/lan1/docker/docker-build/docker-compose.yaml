@@ -34,6 +34,7 @@ services:
     dmz_host:
         build: ./images/host_imm
         container_name: ext_host
+        network_mode: none
         cap_add:
           - NET_ADMIN 
         tty: true
