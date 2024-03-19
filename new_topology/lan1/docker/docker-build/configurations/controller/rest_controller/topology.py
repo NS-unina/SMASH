@@ -15,39 +15,6 @@ class NetworkTopology:
         return cls._instance
     def __init__(self):
         # ------- NETWORK TOPOLOGY LAN1 -------------------------------------------------------------- #
-        # Nodes
-        # Subnet 1
-        self.host = Host('host', '10.1.3.10', '08:00:27:b6:d0:66', 15, '255.255.255.0')
-        self.service = Host('service', '10.1.3.11', '08:00:27:6d:ec:62', 3, '255.255.255.0')
-        self.ssh_service = Host('ssh_service', '10.1.3.13', '08:00:27:b6:d0:69', 16, '255.255.255.0')
-        self.heralding = Honeypot('heralding', '10.1.3.12', '08:00:27:6c:0a:bf', 4, '255.255.255.0')
-
-        # Subnet 2
-        self.ti_host1 = Host('ti_host1', '10.1.4.10', '08:00:27:b7:0e:58', 6, '255.255.255.0')
-        self.ti_host2 = Host('ti_host2', '10.1.4.17', '08:00:27:6d:ec:c4', 25, '255.255.255.0')
-
-        self.cowrie1 = Honeypot('cowrie1', '10.1.4.10', '08:00:27:b7:0e:58', 6, '255.255.255.0')
-        self.cowrie2 = Honeypot('cowrie2', '10.1.4.17', '08:00:27:6d:ec:c4', 25, '255.255.255.0')       
-        self.heralding1 = Honeypot('heralding1', '10.1.4.10', '08:00:27:b7:0e:58', 6, '255.255.255.0')
-        self.heralding2 = Honeypot('heralding2', '10.1.4.10', '08:00:27:b7:0e:58', 6, '255.255.255.0')
-        self.heralding3 = Honeypot('heralding3', '10.1.4.17', '08:00:27:6d:ec:c4', 25, '255.255.255.0')
-        self.heralding4 = Honeypot('heralding4', '10.1.4.17', '08:00:27:6d:ec:c4', 25, '255.255.255.0')
-
-        self.honeypots_list = [self.cowrie1, self.cowrie2, self.heralding1, self.heralding2, self.heralding3, self.heralding4]
-        self.hosts_list= [self.ti_host1, self.ti_host2]
-        self.host_redirected = ["10.1.5.1"]
-
-        self.elk_if1 = Host('ELK_IF1', '10.1.5.10', '08:00:27:7d:b7:b8', 8, '255.255.255.0')
-        self.elk_if2 = Host('ELK_IF2', '10.1.11.10', '08:00:27:f5:6b:90', 13, '255.255.255.0')
-
-        self.dmz_heralding = Honeypot('dmz_heralding', '10.1.10.10', '08:00:27:2c:30:92', 2, '255.255.255.0')
-        self.dmz_service = Host('dmz_service', '10.1.10.11', '08:00:27:b6:d0:67', 22, '255.255.255.0')
-        self.dmz_service1 = Host('dmz_service1', '10.1.10.14', '08:00:27:6d:ec:74', 21, '255.255.255.0')
-        self.dmz_cowrie = Honeypot('dmz_cowrie', '10.1.10.13', '08:00:27:b7:0e:59', 20, '255.255.255.0')
-        self.dmz_host = Host('dmz_host', '10.1.10.12', '08:00:27:b6:d0:68', 23, '255.255.255.0')
-
-        self.nodes = [self.elk_if1,self.elk_if2,self.dmz_heralding,self.dmz_service,self.dmz_service1,self.dmz_cowrie,self.dmz_host]
-
         # Subnets
         # ovs1
         self.subnet1 = Subnet('S1', '10.1.3.0', '255.255.255.0')
@@ -57,6 +24,40 @@ class NetworkTopology:
         self.subnet4 = Subnet('S4', '10.1.10.0', '255.255.255.0')
         self.subnet5 = Subnet('S5', '10.1.11.0', '255.255.255.0')
 
+        # Nodes
+        # Subnet 1
+        self.host = Host('host', '10.1.3.10', '08:00:27:b6:d0:66', 15, '255.255.255.0',self.subnet1)
+        self.service = Host('service', '10.1.3.11', '08:00:27:6d:ec:62', 3, '255.255.255.0', self.subnet1)
+        self.ssh_service = Host('ssh_service', '10.1.3.13', '08:00:27:b6:d0:69', 16, '255.255.255.0', self.subnet1)
+        self.heralding = Honeypot('heralding', '10.1.3.12', '08:00:27:6c:0a:bf', 4, '255.255.255.0', self.subnet1)
+
+        # Subnet 2
+        self.ti_host1 = Host('ti_host1', '10.1.4.10', '08:00:27:b7:0e:58', 6, '255.255.255.0', self.subnet2)
+        self.ti_host2 = Host('ti_host2', '10.1.4.17', '08:00:27:6d:ec:c4', 25, '255.255.255.0', self.subnet2)
+
+        self.cowrie1 = Honeypot('cowrie1', '10.1.4.10', '08:00:27:b7:0e:58', 6, '255.255.255.0', self.subnet2)
+        self.cowrie2 = Honeypot('cowrie2', '10.1.4.17', '08:00:27:6d:ec:c4', 25, '255.255.255.0', self.subnet2)       
+        self.heralding1 = Honeypot('heralding1', '10.1.4.10', '08:00:27:b7:0e:58', 6, '255.255.255.0', self.subnet2)
+        self.heralding2 = Honeypot('heralding2', '10.1.4.10', '08:00:27:b7:0e:58', 6, '255.255.255.0', self.subnet2)
+        self.heralding3 = Honeypot('heralding3', '10.1.4.17', '08:00:27:6d:ec:c4', 25, '255.255.255.0', self.subnet2)
+        self.heralding4 = Honeypot('heralding4', '10.1.4.17', '08:00:27:6d:ec:c4', 25, '255.255.255.0', self.subnet2)
+
+        self.honeypots_list = [self.cowrie1, self.cowrie2, self.heralding1, self.heralding2, self.heralding3, self.heralding4]
+        self.hosts_list= [self.ti_host1, self.ti_host2]
+        self.host_redirected = ["10.1.5.1"]
+
+        self.elk_if1 = Host('ELK_IF1', '10.1.5.10', '08:00:27:7d:b7:b8', 8, '255.255.255.0', self.subnet3)
+        self.elk_if2 = Host('ELK_IF2', '10.1.11.10', '08:00:27:f5:6b:90', 13, '255.255.255.0', self.subnet5)
+
+        self.dmz_heralding = Honeypot('dmz_heralding', '10.1.10.10', '08:00:27:2c:30:92', 2, '255.255.255.0',self.subnet4)
+        self.dmz_service = Host('dmz_service', '10.1.10.11', '08:00:27:b6:d0:67', 22, '255.255.255.0', self.subnet4)
+        self.dmz_service1 = Host('dmz_service1', '10.1.10.14', '08:00:27:6d:ec:74', 21, '255.255.255.0', self.subnet4)
+        self.dmz_cowrie = Honeypot('dmz_cowrie', '10.1.10.13', '08:00:27:b7:0e:59', 20, '255.255.255.0', self.subnet4)
+        self.dmz_host = Host('dmz_host', '10.1.10.12', '08:00:27:b6:d0:68', 23, '255.255.255.0', self.subnet4)
+
+        self.nodes = [self.host, self.service,self.ssh_service,self.heralding,self.elk_if1,self.elk_if2,self.dmz_heralding,self.dmz_service,self.dmz_service1,self.dmz_cowrie,self.dmz_host]
+
+        
         # Gateways
         # ovs1
         self.gw1 = Gateway('gw1', '10.1.3.1', '9e:c3:c6:49:0e:e8', 1, '255.255.255.0')
@@ -150,6 +151,13 @@ class NetworkTopology:
             mac_address = "08:00:27:" + random_suffix
 
         return mac_address
+    
+    def find_host_by_ip(self, ip):
+        for node in self.honeypots_list + self.hosts_list + self.nodes:
+            if node.get_ip_addr() == ip:
+                return node
+        return None
+        
     
     def find_free_ip_address(self,subnet_str):
         # Lista di tutti gli ip address utilizzati

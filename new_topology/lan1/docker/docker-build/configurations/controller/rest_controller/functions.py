@@ -23,6 +23,7 @@ def add_new_host(name, subnet, mac,ip_address):
     url = 'http://10.1.3.1:8080/handle_post'  # URL host
     # Dati da inviare nel corpo della richiesta
     payload = {'name':name, 'subnet': subnet,  'mac':mac,'ip':ip_address }  
+    subnet1 = t.subnet1
 
     #INVIO EVENTO A HOST PER DEPLOYARE UN NUOVO HOST
     response = requests.post(url, data=payload)
@@ -42,7 +43,7 @@ def add_new_host(name, subnet, mac,ip_address):
     
     # Crea un nuovo oggetto Honeypot
     netmask= "255.255.255.0"    
-    new_host = Host(name, ip_address, mac, int(ovs_port), netmask)
+    new_host = Host(name, ip_address, mac, int(ovs_port), netmask,subnet1)
     # Lo aggiunge alla lista di tutti gli honeypot attivi
     t.hosts_list.append(new_host)
 
@@ -68,7 +69,7 @@ def add_new_honeypot(name,host,s_hp,ports_hp):
         print("Messaggio di errore:", response.text)
     
     # Crea un nuovo oggetto Honeypot
-    new_honeypot = Honeypot(name, host.get_ip_addr(), host.get_MAC_addr(), host.get_ovs_port(), host.get_netmask())
+    new_honeypot = Honeypot(name, host.get_ip_addr(), host.get_MAC_addr(), host.get_ovs_port(), host.get_netmask(), host.subnet())
     # Lo aggiunge alla lista di tutti gli honeypot attivi
     t.honeypots_list.append(new_honeypot)
 

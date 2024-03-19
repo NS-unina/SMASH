@@ -1,10 +1,11 @@
 class Node:
-    def __init__(self, name = None, ip_addr = None, MAC = None, ovs_port = 0, netmask = None):
+    def __init__(self, name = None, ip_addr = None, MAC = None, ovs_port = 0, netmask = None, subnet = None):
         self.name = name
         self.ip_addr = ip_addr
         self.MAC = MAC
         self.ovs_port = ovs_port
         self.netmask = netmask
+        self.subnet = subnet
 
     # GET METHODS
     def get_name(self):
@@ -18,6 +19,9 @@ class Node:
 
     def get_ovs_port(self):
         return self.ovs_port
+    
+    def get_subnet(self):
+        return self.subnet
     
     def get_netmask(self):
         return self.netmask
@@ -34,18 +38,21 @@ class Node:
     
     def set_ovs_port(self, gp):
         self.ovs_port = gp
+
+    def set_subnet(self,subnet):
+        self.subnet = subnet
     
     def set_netmask(self, netmask):
         self.netmask = netmask
 
 class Host(Node):
-    def __init__(self, name=None, ip_addr=None, MAC=None, ovs_port=0, netmask=None):
-        super().__init__(name, ip_addr, MAC, ovs_port, netmask)
+    def __init__(self, name=None, ip_addr=None, MAC=None, ovs_port=0, netmask=None, subnet = None):
+        super().__init__(name, ip_addr, MAC, ovs_port, netmask,subnet)
         # Poi eventualmente aggiungi attributi e/o funzioni
 
 class Honeypot(Node):
-    def __init__(self, name=None, ip_addr=None, MAC=None, ovs_port=0, netmask=None, type = None):
-        super().__init__(name, ip_addr, MAC, ovs_port, netmask)
+    def __init__(self, name=None, ip_addr=None, MAC=None, ovs_port=0, netmask=None, type = None,subnet = None):
+        super().__init__(name, ip_addr, MAC, ovs_port, netmask,subnet)
         self.type = type
 
 class Gateway(Node):
@@ -80,6 +87,9 @@ class Subnet:
     # Port = 0 if the node is the gateway
     def add_node(self, node, port):
         self.nodes[port] = node
+    
+    def get_subnet_name(self):
+        return self.subnet_name
 
 
 class Network:

@@ -131,8 +131,11 @@ class RestController(ExampleSwitch13):
 
     def change_decoy_src(self, dpid, src_ip, subnet, decoy, tcp_port,gw,destination,destination_port):
         datapath = self.switches.get(dpid)
+        
         parser = datapath.ofproto_parser
+        #print(subnet.get_subnet_name())
         out_port = u.host_to_port(subnet, src_ip)
+        
         actions = [parser.OFPActionSetField(ipv4_src=destination.get_ip_addr()),
                    parser.OFPActionSetField(eth_src=destination.get_MAC_addr()),
                    parser.OFPActionSetField(tcp_src=int(tcp_port)),

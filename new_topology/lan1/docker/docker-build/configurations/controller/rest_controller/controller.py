@@ -116,19 +116,22 @@ class ExampleSwitch13(app_manager.RyuApp):
         ip_dst = None
         tcp_ports = ["22","21", "23", "1080"]
         decoy_ip = ["10.1.3.12", "10.1.3.13"]
+        trigger_port = ["22,21"]
 
         # get the ipv4 destination address
         ipv4_pkt = pkt.get_protocol(ipv4.ipv4)
         if ipv4_pkt:
             ip_dst = ipv4_pkt.dst
             src_ip = ipv4_pkt.src
+            dst_port = "22"
             # install a redirection flow
             
             
-            if ip_dst in decoy_ip and src_ip not in t.host_redirected:
+            if ip_dst in decoy_ip and src_ip not in t.host_redirected: 
                 source = t.service
                 gw= t.gw1
-                subnet = t.subnet1
+                host = t.find_host_by_ip(src_ip)
+                subnet = host.get_subnet()
                 br_dpid = t.br0_dpid
                 
 
@@ -403,12 +406,12 @@ class ExampleSwitch13(app_manager.RyuApp):
         self.drop_icmp_srcIP_srcPORT_dstIP(parser, t.dmz_service.get_ip_addr(), 22, t.elk_if2.get_ip_addr(), datapath)
         self.drop_tcp_srcIP_srcPORT_dstIP(parser, t.dmz_service.get_ip_addr(), 22, t.elk_if2.get_ip_addr(), datapath)
 
-        self.drop_tcp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.heralding.get_ip_addr(), datapath)
-        self.drop_icmp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.heralding.get_ip_addr(), datapath)
-        self.drop_tcp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.service.get_ip_addr(), datapath)
-        self.drop_icmp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.service.get_ip_addr(), datapath)    
-        self.drop_tcp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.host.get_ip_addr(), datapath)
-        self.drop_icmp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.host.get_ip_addr(), datapath)             
+        #self.drop_tcp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.heralding.get_ip_addr(), datapath)
+        #self.drop_icmp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.heralding.get_ip_addr(), datapath)
+        #self.drop_tcp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.service.get_ip_addr(), datapath)
+        #self.drop_icmp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.service.get_ip_addr(), datapath)    
+        #self.drop_tcp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.host.get_ip_addr(), datapath)
+        #self.drop_icmp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.host.get_ip_addr(), datapath)             
      
 
 
