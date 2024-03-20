@@ -15,14 +15,16 @@ class NetworkTopology:
         return cls._instance
     def __init__(self):
         # ------- NETWORK TOPOLOGY LAN1 -------------------------------------------------------------- #
+        self.br0_dpid = 64105189026373
+        self.br1_dpid = 64105189026374
         # Subnets
         # ovs1
-        self.subnet1 = Subnet('S1', '10.1.3.0', '255.255.255.0')
-        self.subnet2 = Subnet('S2', '10.1.4.0', '255.255.255.0')
-        self.subnet3 = Subnet('S3', '10.1.5.0', '255.255.255.0')
+        self.subnet1 = Subnet('S1', '10.1.3.0', '255.255.255.0',self.br0_dpid)
+        self.subnet2 = Subnet('S2', '10.1.4.0', '255.255.255.0',self.br0_dpid)
+        self.subnet3 = Subnet('S3', '10.1.5.0', '255.255.255.0',self.br0_dpid)
         # ovs2
-        self.subnet4 = Subnet('S4', '10.1.10.0', '255.255.255.0')
-        self.subnet5 = Subnet('S5', '10.1.11.0', '255.255.255.0')
+        self.subnet4 = Subnet('S4', '10.1.10.0', '255.255.255.0',self.br1_dpid)
+        self.subnet5 = Subnet('S5', '10.1.11.0', '255.255.255.0',self.br1_dpid)
 
         # Nodes
         # Subnet 1
@@ -44,7 +46,7 @@ class NetworkTopology:
 
         self.honeypots_list = [self.cowrie1, self.cowrie2, self.heralding1, self.heralding2, self.heralding3, self.heralding4]
         self.hosts_list= [self.ti_host1, self.ti_host2]
-        self.host_redirected = ["10.1.5.1"]
+        self.host_redirected = ["10.1.5.1", "10.1.3.1"]
 
         self.elk_if1 = Host('ELK_IF1', '10.1.5.10', '08:00:27:7d:b7:b8', 8, '255.255.255.0', self.subnet3)
         self.elk_if2 = Host('ELK_IF2', '10.1.11.10', '08:00:27:f5:6b:90', 13, '255.255.255.0', self.subnet5)
@@ -56,17 +58,18 @@ class NetworkTopology:
         self.dmz_host = Host('dmz_host', '10.1.10.12', '08:00:27:b6:d0:68', 23, '255.255.255.0', self.subnet4)
 
         self.nodes = [self.host, self.service,self.ssh_service,self.heralding,self.elk_if1,self.elk_if2,self.dmz_heralding,self.dmz_service,self.dmz_service1,self.dmz_cowrie,self.dmz_host]
-
+        
         
         # Gateways
         # ovs1
-        self.gw1 = Gateway('gw1', '10.1.3.1', '9e:c3:c6:49:0e:e8', 1, '255.255.255.0')
-        self.gw2 = Gateway('gw2', '10.1.4.1', '16:67:1f:3f:86:a7', 5, '255.255.255.0')
-        self.gw3 = Gateway('gw3', '10.1.5.1', 'fe:46:67:35:0d:d1', 7, '255.255.255.0')
+        self.gw1 = Gateway('gw1', '10.1.3.1', '9e:c3:c6:49:0e:e8', 1, '255.255.255.0',self.subnet1)
+        self.gw2 = Gateway('gw2', '10.1.4.1', '16:67:1f:3f:86:a7', 5, '255.255.255.0',self.subnet2)
+        self.gw3 = Gateway('gw3', '10.1.5.1', 'fe:46:67:35:0d:d1', 7, '255.255.255.0', self.subnet3)
         # ovs2
-        self.gw10 = Gateway('gw10', '10.1.10.1', '8a:ae:02:40:8f:83', 10, '255.255.255.0')
-        self.gw11 = Gateway('gw11', '10.1.11.1', 'ea:6a:20:a0:96:10', 11, '255.255.255.0')
+        self.gw10 = Gateway('gw10', '10.1.10.1', '8a:ae:02:40:8f:83', 10, '255.255.255.0', self.subnet4)
+        self.gw11 = Gateway('gw11', '10.1.11.1', 'ea:6a:20:a0:96:10', 11, '255.255.255.0', self.subnet5)
 
+        self.gateway = [self.gw1,self.gw2,self.gw3, self.gw10, self.gw11]
         # Network
         self.network1 = Network('Net1')
         self.network2 = Network('Net2')
@@ -153,7 +156,7 @@ class NetworkTopology:
         return mac_address
     
     def find_host_by_ip(self, ip):
-        for node in self.honeypots_list + self.hosts_list + self.nodes:
+        for node in self.honeypots_list + self.hosts_list + self.nodes + self.gateway:
             if node.get_ip_addr() == ip:
                 return node
         return None
@@ -164,7 +167,7 @@ class NetworkTopology:
         used_ip_addresses = set()
 
         # Esamina tutti i nodi nella topologia
-        for node in self.honeypots_list + self.hosts_list + self.nodes:
+        for node in self.honeypots_list + self.hosts_list + self.nodes + self.gateway:
             used_ip_addresses.add(node.get_ip_addr())
 
         # Parsa la stringa della sottorete per ottenere l'oggetto di tipo ipaddress.IPv4Network

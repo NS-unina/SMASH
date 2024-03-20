@@ -1,6 +1,5 @@
 from topology import NetworkTopology
 import requests
-import asyncio
 import aiohttp
 import mapping as map
 from ti_management import HoneypotManager

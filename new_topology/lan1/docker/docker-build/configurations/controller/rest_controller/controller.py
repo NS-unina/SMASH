@@ -20,6 +20,7 @@ from ryu.controller.handler import set_ev_cls
 from ryu.ofproto import ofproto_v1_3
 from ryu.lib.packet import packet
 from ryu.lib.packet import ethernet
+from ryu.lib.hub import spawn
 from utils import Utils as u
 from network import Host, Honeypot, Attacker, Subnet, Network, Gateway
 from ryu.lib.packet import tcp, icmp, arp, ipv4, vlan
@@ -132,15 +133,15 @@ class ExampleSwitch13(app_manager.RyuApp):
                 gw= t.gw1
                 host = t.find_host_by_ip(src_ip)
                 subnet = host.get_subnet()
-                br_dpid = t.br0_dpid
-                
+                br_dpid = subnet.get_br()
+               
 
                 for tcp_port in tcp_ports:
-                    self.redirect_traffic (self,src_ip,tcp_port,source,gw,subnet,br_dpid)
+                    spawn(self.redirect_traffic,self,src_ip,tcp_port,source,gw,subnet,br_dpid)                  
                     print("REGOLA REDIRECTION INSERITA DIRETTAMENTE DAL CONTROLLER")    
 
            
-
+        
         # get the received port number from packet_in message.
         in_port = msg.match['in_port']
         out_port = ofproto.OFPP_FLOOD

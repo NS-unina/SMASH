@@ -56,7 +56,7 @@ class Honeypot(Node):
         self.type = type
 
 class Gateway(Node):
-    def __init__(self, name=None, ip_addr=None, MAC=None, ovs_port=0, netmask=None):
+    def __init__(self, name=None, ip_addr=None, MAC=None, ovs_port=0, netmask=None, subnet = None):
         super().__init__(name, ip_addr, MAC, ovs_port, netmask)
 
 class Service(Node):
@@ -76,10 +76,11 @@ class Attacker(Node):
         self.network = network
 
 class Subnet:
-    def __init__(self, subnet_name = None, ip_addr = None, netmask = None):
+    def __init__(self, subnet_name = None, ip_addr = None, netmask = None, br = None):
         self.subnet_name = subnet_name
         self.ip_addr = ip_addr
         self.netmask = netmask
+        self.br = br
         self.nodes = dict()     # host, honeypot, server, gateway 
 
         # la chiave di ogni elemento è la porta del gateway a cui i vari nodi sono collegati
@@ -90,6 +91,8 @@ class Subnet:
     
     def get_subnet_name(self):
         return self.subnet_name
+    def get_br(self):
+        return self.br
 
 
 class Network:

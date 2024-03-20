@@ -1,5 +1,4 @@
 import json
-import asyncio
 
 from controller import ExampleSwitch13
 from webob import Response
