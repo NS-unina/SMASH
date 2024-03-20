@@ -1,9 +1,0 @@
-#!/bin/sh
-
-ip route add 10.1.3.0/24 via 10.1.5.1 dev eth1
-ip route add 10.1.4.0/24 via 10.1.5.1 dev eth1
-ip route add 10.1.5.0/24 via 10.1.5.1 dev eth1
-ip route add 10.2.3.0/24 via 10.1.5.1 dev eth1
-ip route add 10.2.4.0/24 via 10.1.5.1 dev eth1
-ip route add 10.2.5.0/24 via 10.1.5.1 dev eth1
-

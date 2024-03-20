@@ -1,4 +1,0 @@
-psycopg2-binary
-PyMySQL==0.9.3
-pymysql
-pycryptodome

@@ -1,1 +1,0 @@
-{"virtualbox":{"/home/claudio/ubuntu/dmz_service":{"guestpath":"/home/claudio/ubuntu/dmz_service","hostpath":"/home/claudio/Honey-MTD-2/topology/vagrant/ubuntu/dmz_service","disabled":false,"__vagrantfile":true},"/vagrant":{"guestpath":"/vagrant","hostpath":"/home/claudio/Honey-MTD-2/topology/vagrant/ubuntu","disabled":false,"__vagrantfile":true}}}
