@@ -15,32 +15,11 @@ Vagrant.configure("2") do |config|
   #config.vm.box = "ubuntu/trusty64"
     config.vm.provider :virtualbox
 
-    config.vm.define "elk" do |elk|
-      elk.vm.box = "ubuntu/focal64"
-        elk.vm.provider "virtualbox" do |elk1|
-          # Customize the amount of memory on the VM:
-	    elk1.memory = "4096"
-	  end
-      elk.vm.synced_folder "elk/", "/home/claudio/ubuntu/elk"
-      elk.vm.network :forwarded_port, guest: 22, host: 3203, id: 'ssh'
-      elk.vm.network "public_network", bridge: "tap25", mac: "0800277db7a1", ip: "10.2.5.10"
-      
-      elk.vm.provision "shell",
-        run: "always",
-        inline: "ip route add 10.2.3.0/24 via 10.2.5.1 dev enp0s8"
-
-      elk.vm.provision "shell",
-        run: "always",
-        inline: "ip route add 10.2.4.0/24 via 10.2.5.1 dev enp0s8"
-
-      elk.vm.provision "shell", path: "./configurations/elk.sh"
-      elk.vm.provision "shell", path: "./elk/start.sh"
-    end
-
-
-    deploy_service(config, "int_service", "ubuntu/focal64", "512","int_service", 22, 3300,"ssh", "tap21", "0800276dec51", "10.2.3.11", ["10.2.4.0/24", "10.2.5.0/24"],"10.2.3.1")
-    deploy_honeypot(config, "int_heralding", "ubuntu/focal64", "512","shared", 22, 3301,"ssh", "tap22", "0800276c0abc", "10.2.3.12", ["10.2.4.0/24", "10.2.5.0/24"],"10.2.3.1")
-
+	
+    #deploy_elk(config, "elk", "ubuntu/focal64", "4096","elk", 22, 3250,"ssh", "tap25","tap11", "0800277db7b8", "080027f56b90", "10.1.5.10","10.1.11.10", ["10.1.4.0/24", "10.1.3.0/24"], ["10.1.10.0/24"], "10.1.5.1", "10.1.11.1")
+    deploy_service(config, "int_service_lan2", "ubuntu/focal64", "512","int_service", 22, 3360,"ssh", "tap21", "0800276dec51", "10.2.3.11", ["10.2.4.0/24", "10.2.5.0/24"],"10.2.3.1")
+    deploy_honeypot(config, "int_heralding_lan2", "ubuntu/focal64", "512","shared", 22, 3361,"ssh", "tap22", "0800276c0abc", "10.2.3.12", ["10.2.4.0/24", "10.2.5.0/24"],"10.2.3.1")
+    deploy_honeyfarm(config, "ti_host1_lan2", "ubuntu/focal64", "1024","ti_host1", 22, 3362,"ssh", "tap23", "080027b70e59", "10.2.4.10", ["10.2.3.0/24", "10.2.5.0/24"],"10.2.4.1")
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs

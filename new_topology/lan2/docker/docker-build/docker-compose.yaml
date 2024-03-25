@@ -1,39 +1,9 @@
 version: "3"
 
 services:
-    heralding_502da8:
-        build: ./images/heralding_imm
-        container_name: heralding_502da8
-        cap_add:
-        - NET_ADMIN 
-        tty: true
-        stdin_open: true
-        privileged: true
-        volumes:
-        - ./configurations/heralding:/home
-    heralding_2c27cc:
-        build: ./images/heralding_imm
-        container_name: heralding_2c27cc
-        cap_add:
-        - NET_ADMIN 
-        tty: true
-        stdin_open: true
-        privileged: true
-        volumes:
-        - ./configurations/heralding:/home
-    heralding_105b34:
-        build: ./images/heralding_imm
-        container_name: heralding_105b34
-        cap_add:
-        - NET_ADMIN 
-        tty: true
-        stdin_open: true
-        privileged: true
-        volumes:
-        - ./configurations/heralding:/home
-    int_host: 
+    int_host_lan2: 
         build: ./images/host_imm
-        container_name: int_host
+        container_name: int_host_lan2
         cap_add:
           - NET_ADMIN 
         tty: true
@@ -41,9 +11,9 @@ services:
         privileged: true
         volumes:
           - ./configurations/int_host:/home
-    int_ssh_server:
+    int_ssh_server_lan2:
         build: ./images/ssh_imm
-        container_name: int_ssh_server
+        container_name: int_ssh_server_lan2
         cap_add:
           - NET_ADMIN 
         tty: true
@@ -51,9 +21,9 @@ services:
         privileged: true
         volumes:
           - ./configurations/int_ssh_server:/home
-    controller:
+    controller_lan2:
         build: ./images/ryu_imm
-        container_name: controller
+        container_name: controller_lan2
         cap_add:
           - NET_ADMIN 
         tty: true
@@ -61,33 +31,4 @@ services:
         privileged: true
         volumes:
           - ./configurations/controller:/home
-    heralding:
-        build: ./images/heralding_imm
-        container_name: heralding
-        cap_add:
-          - NET_ADMIN 
-        tty: true
-        stdin_open: true
-        privileged: true
-        volumes:
-          - ./configurations/heralding:/home
-    dmz_host:
-        build: ./images/host_imm
-        container_name: ext_host
-        cap_add:
-          - NET_ADMIN 
-        tty: true
-        stdin_open: true
-        privileged: true
-        volumes:
-          - ./configurations/ext_host:/home       
-    dmz_service:
-        build: ./images/ssh_imm
-        container_name: ssh_server
-        cap_add:
-          - NET_ADMIN 
-        tty: true
-        stdin_open: true
-        privileged: true
-        volumes:
-          - ./configurations/ssh_server:/home
+

@@ -1,83 +1,47 @@
 #!/bin/sh
 
-if sudo ovs-vsctl --data=bare --no-heading --columns=name find interface external_ids:container_id=controller \
-   external_ids:container_iface=eth1 | grep -q "c1_l"; then
-        sudo ./my-ovs-docker del-port br0_lan1 eth1 controller
+if sudo ovs-vsctl --data=bare --no-heading --columns=name find interface external_ids:container_id=controller_lan2 \
+   external_ids:container_iface=eth1 | grep -q "c21_l"; then
+        sudo ./my-ovs-docker del-port br_lan2 eth1 controller_lan2
 fi
 
-if sudo ovs-vsctl --data=bare --no-heading --columns=name find interface external_ids:container_id=controller \
-   external_ids:container_iface=eth2 | grep -q "c2_l"; then
-        sudo ./my-ovs-docker del-port br1_lan1 eth2 controller
-fi
 
 # Remember to change containers name if they change
-sudo docker stop controller
-sudo docker start controller
+sudo docker stop controller_lan2
+sudo docker start controller_lan2
 
-sudo ./my-ovs-docker add-port br0_lan1 eth1 controller c1 20 --ipaddress=10.1.5.100/24
-sudo ovs-vsctl -- set port c1_l tag=3
-sudo iptables -t nat -A POSTROUTING -o c1_l -j MASQUERADE
-sudo ./my-ovs-docker add-port br1_lan1 eth2 controller c2 21 --ipaddress=10.1.11.100/24
-sudo ovs-vsctl -- set port c2_l tag=11
-sudo iptables -t nat -A POSTROUTING -o c2_l -j MASQUERADE
+sudo ./my-ovs-docker add-port br_lan2 eth1 controller_lan2 c21 31 --ipaddress=10.2.5.100/24
+sudo ovs-vsctl -- set port c21_l tag=23
+sudo iptables -t nat -A POSTROUTING -o c21_l -j MASQUERADE
 
-if sudo ovs-vsctl --data=bare --no-heading --columns=name find interface external_ids:container_id=int_host \
-   external_ids:container_iface=eth1 | grep -q "h1_l"; then
-        sudo ./my-ovs-docker del-port br0_lan1 eth1 int_host
+
+if sudo ovs-vsctl --data=bare --no-heading --columns=name find interface external_ids:container_id=int_host_lan2 \
+   external_ids:container_iface=eth1 | grep -q "h21_l"; then
+        sudo ./my-ovs-docker del-port br_lan2 eth1 int_host_lan2
 fi
 
-sudo docker stop int_host
-sudo docker start int_host
+sudo docker stop int_host_lan2
+sudo docker start int_host_lan2
 
-sudo ./my-ovs-docker add-port br0_lan1 eth1 int_host h1 15 --ipaddress=10.1.3.10/24 --macaddress=08:00:27:b6:d0:66
-sudo ovs-vsctl -- set port h1_l tag=1
-sudo iptables -t nat -A POSTROUTING -o h1_l -j MASQUERADE
+sudo ./my-ovs-docker add-port br_lan2 eth1 int_host_lan2 h21 35 --ipaddress=10.2.3.10/24 --macaddress=08:00:27:b6:d0:46
+sudo ovs-vsctl -- set port h21_l tag=21
+sudo iptables -t nat -A POSTROUTING -o h21_l -j MASQUERADE
 
 
 
-if sudo ovs-vsctl --data=bare --no-heading --columns=name find interface external_ids:container_id=int_ssh_server \
+if sudo ovs-vsctl --data=bare --no-heading --columns=name find interface external_ids:container_id=int_ssh_server_lan2 \
    external_ids:container_iface=eth1 | grep -q "h3_l"; then
-        sudo ./my-ovs-docker del-port br0_lan1 eth1 int_ssh_server
+        sudo ./my-ovs-docker del-port br_lan2 eth1 int_ssh_server_lan2
 fi
 
-sudo docker stop int_ssh_server
-sudo docker start int_ssh_server
+sudo docker stop int_ssh_server_lan2
+sudo docker start int_ssh_server_lan2
 
-sudo ./my-ovs-docker add-port br0_lan1 eth1 int_ssh_server h3 16 --ipaddress=10.1.3.13/24 --macaddress=08:00:27:b6:d0:69
-sudo ovs-vsctl -- set port h3_l tag=1
-sudo iptables -t nat -A POSTROUTING -o h3_l -j MASQUERADE
-
-
+sudo ./my-ovs-docker add-port br_lan2 eth1 int_ssh_server_lan2 h23 36 --ipaddress=10.2.3.13/24 --macaddress=08:00:27:b6:d0:61
+sudo ovs-vsctl -- set port h23_l tag=21
+sudo iptables -t nat -A POSTROUTING -o h23_l -j MASQUERADE
 
 
-if sudo ovs-vsctl --data=bare --no-heading --columns=name find interface external_ids:container_id=ssh_server \
-   external_ids:container_iface=eth1 | grep -q "s1_l"; then
-        sudo ./my-ovs-docker del-port br1_lan1 eth1 ssh_server
-fi
 
-sudo docker stop ssh_server
-sudo docker start ssh_server
 
-sudo ./my-ovs-docker add-port br1_lan1 eth1 ssh_server s1 22 --ipaddress=10.1.10.11/24 --macaddress=08:00:27:b6:d0:67
-sudo ovs-vsctl -- set port s1_l tag=10
-sudo iptables -t nat -A POSTROUTING -o s1_l -j MASQUERADE
-
-if sudo ovs-vsctl --data=bare --no-heading --columns=name find interface external_ids:container_id=ext_host \
-   external_ids:container_iface=eth1 | grep -q "h2_l"; then
-        sudo ./my-ovs-docker del-port br1_lan1 eth1 ext_host
-fi
-
-sudo docker stop ext_host
-sudo docker start ext_host
-
-sudo ./my-ovs-docker add-port br1_lan1 eth1 ext_host h2 23 --ipaddress=10.1.10.12/24 --macaddress=08:00:27:b6:d0:68
-sudo ovs-vsctl -- set port h2_l tag=10
-sudo iptables -t nat -A POSTROUTING -o h2_l -j MASQUERADE
-
-sudo docker stop heralding
-sudo docker start heralding
-
-sudo ./my-ovs-docker add-port br0_lan1 eth1 heralding t1 14 --ipaddress=10.1.3.21/24 --macaddress=08:00:27:b6:d0:6c
-sudo ovs-vsctl -- set port t1_l tag=1
-sudo iptables -t nat -A POSTROUTING -o t1_l -j MASQUERADE
 
