@@ -8,7 +8,7 @@ you need to install *Open vSwitch*, *Vagrant*, *Virtualbox*, *Docker* and *Docke
 The following steps allow project running on a Linux *(Ubuntu 22.04)* machine.
 
 ### Setup
-In `topology` folder: 
+In `new_topology` folder: 
 1. Execute the script **create_net.sh**.
 ```  
 $ ./create_net.sh
@@ -19,36 +19,45 @@ $ ./setup.sh
 ```
 Virtual Machines creation and configuration:
 
-1. In `vagrant/ubuntu` folder run **vagrant up**.
+1. In `lan1/vagrant/ubuntu` folder run **vagrant up**.
 ```  
-$ cd topology/vagrant/ubuntu
+$ cd new_topology/lan1/vagrant/ubuntu
 $ vagrant up
 ```
-2. VM username = **vagrant**. VM password = **vagrant**.
-3. Enter in *ext_heralding* VM (via VirtualBox Gui) and execute the script *"start.sh"* in `root` directory.
-4. Enter in *int_heralding* VM and execute the script *"start.sh"* in `root` directory.
+VM username = **vagrant**. VM password = **vagrant**.
+
+Server Flask:
+1. Install Flask.
+```  
+$ sudo pip3 install flask
+```  
+2. In `new_topology/lan1` folder run **python3 app.py**
+```  
+$ cd new_topology/lan1
+$ python3 app.py
+```
 
 Containers building and setup:
 1. In `docker/docker-build` folder run **docker compose up**.
 ```  
-$ cd topology/docker/docker-build
+$ cd new_topology/docker/docker-build
 $ docker compose up
 ```
 2. In `docker` folder execute the script **setup_container.sh**.
 ```  
-$ cd topology/docker
+$ cd new_topology/docker
 $ ./setup_container.sh
 ```
 3. In `docker` folder execute the script **auth.sh**.
 ```  
-$ cd topology/docker
+$ cd new_topology/docker
 $ ./auth.sh
 ```
 ## Execution
 ### Start Ryu Controller
 1. Open a command line and execute *controller* Container:
 ```  
-$ docker exec -it controller bash
+$ sudo docker exec -it controller bash
 ```
 2. In *controller* Container, enter in **/home/rest_controller** directory and run the following command:
 ```  
@@ -67,15 +76,15 @@ $ python3 -m elastalert.elastalert --verbose
 ## Reset
 1. In `/docker/docker-build` run **docker compose down**.
 ```  
-$ cd topology/docker/docker-build
+$ cd new_topology/docker/docker-build
 $ docker compose down
 ```
 2. In `/vagrant/ubuntu` run **vagrant destroy**.
 ```  
-$ cd topology/vagrant/ubuntu
+$ cd new_topology/vagrant/ubuntu
 $ vagrant destroy
 ```
-3. In `topology` execute the script **reset.sh**.
+3. In `new_topology` execute the script **reset.sh**.
 ```  
 $ ./reset.sh
 
