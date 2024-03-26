@@ -35,9 +35,9 @@ echo "Connect br1 to controller 10.1.11.100:6633"
 sudo ovs-vsctl set-controller br1_lan1 tcp:10.1.11.100:6633
 
 #LAN2
-create_vlan "vlan21" "br_lan2" "21" "10.2.3.1/24" "8a:ae:02:40:8f:93" "50"
-create_vlan "vlan22" "br_lan2" "22" "10.2.4.1/24" "ea:6a:20:a0:96:11" "51"
-create_vlan "vlan23" "br_lan2" "23" "10.2.5.1/24" "ea:6a:20:a0:96:12" "52"
+create_vlan "vlan21" "br_lan2" "21" "10.2.3.1/24" "8a:ae:02:40:8f:96" "50"
+create_vlan "vlan22" "br_lan2" "22" "10.2.4.1/24" "ea:6a:20:a0:96:15" "51"
+create_vlan "vlan23" "br_lan2" "23" "10.2.5.1/24" "ea:6a:20:a0:96:17" "52"
 
 echo "Connect br_lan2 to controller 10.2.5.100:6633"
 sudo ovs-vsctl set-controller br_lan2 tcp:10.2.5.100:6633

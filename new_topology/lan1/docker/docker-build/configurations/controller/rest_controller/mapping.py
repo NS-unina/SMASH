@@ -24,9 +24,9 @@ index_decoy_mapping = {
     "cowrie1": man.index_honeypot.get("cowrie1",None),
     "cowrie2": man.index_honeypot.get("cowrie2",None),
     "heralding1": man.index_honeypot.get("heralding1",None),
-    "heralding2": man.index_honeypot.get("heralding1",None),
-    "heralding3": man.index_honeypot.get("heralding1",None),
-    "heralding4": man.index_honeypot.get("heralding1",None),
+    "heralding2": man.index_honeypot.get("heralding2",None),
+    "heralding3": man.index_honeypot.get("heralding3",None),
+    "heralding4": man.index_honeypot.get("heralding4",None),
     
 }
 
