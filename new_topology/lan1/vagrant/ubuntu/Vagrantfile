@@ -29,7 +29,6 @@ Vagrant.configure("2") do |config|
     deploy_honeypot(config, "dmz_cowrie", "ubuntu/focal64", "512","dmz_cowrie", 22, 3206,"ssh", "tap12", "080027b70e59", "10.1.10.13", ["10.1.3.0/24", "10.1.5.0/24", "10.1.4.0/24", "10.1.11.0/24"],"10.1.10.1")
     deploy_service(config, "dmz_service", "ubuntu/focal64", "512","dmz_service", 22, 3207,"ssh", "tap13", "0800276dec74", "10.1.10.14", ["10.1.4.0/24", "10.1.5.0/24", "10.1.3.0/24", "10.1.11.0/24"],"10.1.10.1")
   # HONEYPOT FARM
-    deploy_honeyfarm_runtime(config, "cowrie55", "ubuntu/focal64", "1024","ext_cowrie", 22, 3458,"ssh", "", "0800276dedd8", "10.1.4.65", ["10.1.3.0/24", "10.1.5.0/24", "10.1.10.0/24", "10.1.11.0/24"],"10.1.4.1")
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs

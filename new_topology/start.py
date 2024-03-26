@@ -2,84 +2,38 @@ import subprocess
 import os
 import sys
 import time
+import libtmux
 
-def main():
+def run_script_in_a_different_windows(script_path):
+   # Esegui il comando tmux per aprire una nuova sessione e eseguire lo script
+    terminal_command = f"gnome-terminal -- bash -c 'bash {script_path}; exec bash'"
+    try:
+        subprocess.run(terminal_command, shell=True)
+    except subprocess.CalledProcessError as e:
+        print("Errore durante l'esecuzione dello script con tmux:", e)
+        sys.exit(1)  # Esci dallo script con codice di uscita 1 in caso di errore 
 
-    current_directory = os.path.dirname(os.path.abspath(__file__))
-    vagrant_lan2_directory = os.path.join(current_directory,"lan1","vagrant","ubuntu")
-    docker_lan2_directory = os.path.join(current_directory,"lan1","docker")
-    docker_compose_lan2_directory = os.path.join(docker_lan2_directory,"docker-build")
-    
 
-    
-    # Costruisci il percorso completo dello script
-    script1_path = os.path.join(current_directory, 'reset.sh')
-    script2_path = os.path.join(current_directory, 'create_net.sh')
-    script3_path = os.path.join(current_directory, 'setup.sh')
-
-    script4_path = os.path.join(docker_lan2_directory, 'setup_container.sh')
-    script5_path = os.path.join(docker_lan2_directory, 'auth.sh')
-
-    flask_server_path = os.path.join(current_directory, 'lan1', 'app.py')
-
-    
-    
-    # Chiamata allo script reset.sh
-    process1 = subprocess.run(['bash', script1_path], capture_output=True, text=True)
-    # Stampa l'output dello script
-    print(process1.stdout)
-
-     # Esegui il controllo sul codice di uscita di reset.sh
-    if process1.returncode == 0:
-        print("Lo script reset.sh è stato eseguito correttamente.")
+def run_shell_script(script_path):
+    process = subprocess.run(['bash', script_path], capture_output=True, text=True)
+    print(process.stdout)
+    if process.returncode == 0:
+        print(f"Lo script {script_path} è stato eseguito correttamente.")
     else:
-        print("Errore durante l'esecuzione dello script reset.sh. Codice di uscita:", process1.returncode)
-        sys.exit(1)  # Esci dallo script con codice di uscita 1 in caso di errore
+        print(f"Errore durante l'esecuzione dello script {os.path.basename(script_path)}. Codice di uscita: {process.returncode}")
+        sys.exit(1)
 
-    # Chiamata allo script create_net.sh
-    process2 = subprocess.run(['bash', script2_path], capture_output=True, text=True)
-    # Stampa l'output dello script
-    print(process2.stdout)
-     # Esegui il controllo sul codice di uscita di create_net.sh
-    if process2.returncode == 0:
-        print("Lo script create_net.sh è stato eseguito correttamente.")
-    else:
-        print("Errore durante l'esecuzione dello script create_net.sh. Codice di uscita:", process2.returncode)
-        sys.exit(1)  # Esci dallo script con codice di uscita 1 in caso di errore
-
-    # Chiamata allo script setup.sh
-    process3 = subprocess.run(['bash', script3_path], capture_output=True, text=True)
-
-    # Stampa l'output dello script
-    print(process3.stdout)
-     # Esegui il controllo sul codice di uscita di setup.sh
-    if process3.returncode == 0:
-        print("Lo script setup.sh è stato eseguito correttamente.")
-        
-    else:
-        print("Errore durante l'esecuzione dello script setup.sh. Codice di uscita:", process3.returncode)
-        sys.exit(1)  # Esci dallo script con codice di uscita 1 in caso di errore    
-
-    print("Topologia creata correttamente")
-    time.sleep(5)
-
-    
-    
-      # Avvia il server Flask in background
-    print("Avvio del server Flask in background:")
+def start_flask_server(flask_server_path):
     python_process = subprocess.Popen(['nohup', 'python3', flask_server_path, '&'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-
-    # Attendere un breve momento per il server Flask per avviarsi
     time.sleep(2)
-
-    # Esegui il controllo sul codice di uscita
     if python_process.returncode is None:
         print("Il server Flask è stato avviato in background.")
     else:
-        print("Errore durante l'avvio del server Flask. Codice di uscita: {}".format(python_process.returncode))
-        sys.exit(1)  # Esci dallo script con codice di uscita 1 in caso di errore
+        print(f"Errore durante l'avvio del server Flask. Codice di uscita: {python_process.returncode}")
+        sys.exit(1)
 
-    os.chdir(docker_compose_lan2_directory)
+def start_docker_compose(docker_compose_directory):
+    os.chdir(docker_compose_directory)
     try:
         subprocess.run(['docker','compose', 'up', '-d'], check=True)
         print("Docker compose up completato con successo.")
@@ -87,30 +41,17 @@ def main():
         print("Errore durante l'esecuzione di Docker compose up:", e)
         sys.exit(1)  # Esci dallo script con codice di uscita 1 in caso di errore
 
+def setup_docker_container(docker_directory):
+    os.chdir(docker_directory)
+     # Chiamata allo script setup_container.sh
+    script1_path = os.path.join(docker_directory, 'setup_container.sh')
+    script2_path = os.path.join(docker_directory, 'auth.sh')
+    run_shell_script(script1_path)
+    run_shell_script(script2_path)
 
-    time.sleep(2)
-    os.chdir(docker_lan2_directory)
-    # Chiamata allo script setup_container.sh
-    subprocess.call(script4_path)
-    
 
-    time.sleep(5)
-     # Chiamata allo script auth.sh
-    process5 = subprocess.run(['bash', script5_path], capture_output=True, text=True)
-    # Stampa l'output dello script
-    print(process5.stdout)
-
-     # Esegui il controllo sul codice di uscita di setup_container.sh
-    if process5.returncode == 0:
-        print("Lo script auth.sh è stato eseguito correttamente.")
-    else:
-        print("Errore durante l'esecuzione dello script auth.sh. Codice di uscita:", process5.returncode)
-        sys.exit(1)  # Esci dallo script con codice di uscita 1 in caso di errore    
-
-    
-
-    os.chdir(vagrant_lan2_directory)
-
+def start_vagrant(vagrant_directory):
+    os.chdir(vagrant_directory) 
     try:
         subprocess.run(['vagrant', 'destroy', '-f'], check=True)
         print("Vagrant destroy  completato con successo.")
@@ -125,6 +66,54 @@ def main():
         print("Errore durante l'esecuzione di Vagrant up:", e)
         sys.exit(1)  # Esci dallo script con codice di uscita 1 in caso di errore
 
+
+
+def main():
+
+    current_directory = os.path.dirname(os.path.abspath(__file__))
+    vagrant_lan1_directory = os.path.join(current_directory,"lan1","vagrant","ubuntu")
+    docker_lan1_directory = os.path.join(current_directory,"lan1","docker")
+    docker_compose_lan2_directory = os.path.join(docker_lan1_directory,"docker-build")
+    
+    
+
+    
+    # Costruisci il percorso completo dello script
+    script1_path = os.path.join(current_directory, 'reset.sh')
+    script2_path = os.path.join(current_directory, 'create_net.sh')
+    script3_path = os.path.join(current_directory, 'setup.sh')
+
+    flask_server_path = os.path.join(current_directory, 'lan1', 'app.py')
+    start_controller_path = os.path.join(current_directory, 'start_controller.sh')
+    start_int_host_path = os.path.join(current_directory, 'start_int_host.sh')
+
+    
+    # Chiamata allo script reset.sh
+    run_shell_script(script1_path)
+    # Chiamata allo script create_net.sh
+    run_shell_script(script2_path)
+    # Chiamata allo script setup.sh
+    run_shell_script(script3_path)
+
+    print("Topologia creata correttamente")
+    time.sleep(5)
+      # Avvia il server Flask in background
+    print("Avvio del server Flask in background:")
+    start_flask_server(flask_server_path)
+
+    start_docker_compose(docker_compose_lan2_directory)
+    time.sleep(2)
+
+    setup_docker_container(docker_lan1_directory)
+
+    time.sleep(5)
+
+    run_script_in_a_different_windows(start_controller_path)
+    run_script_in_a_different_windows(start_int_host_path)
+    
+    time.sleep(2)
+    #start_vagrant(vagrant_lan1_directory)
+   
 
 
 
