@@ -43,6 +43,7 @@ class ExampleSwitch13(app_manager.RyuApp):
         self.port = None
         self.attacker = None
         self.dpid_br0 = 64105189026377
+        self.dpid_br1 = 64105189026384
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def switch_features_handler(self, ev):
@@ -65,6 +66,15 @@ class ExampleSwitch13(app_manager.RyuApp):
             self.add_default_rules_br0(datapath)
             
         
+        if dpid == t.br1_dpid:
+            # install the table-miss flow entry
+            print(dpid)
+            match = parser.OFPMatch()
+            actions = [parser.OFPActionOutput(ofproto.OFPP_CONTROLLER,
+                                ofproto.OFPCML_NO_BUFFER)]
+            self.add_flow(datapath, 0, match, actions, 0)
+            self.add_default_rules_br1(datapath)
+            
     @set_ev_cls(ofp_event.EventOFPFlowRemoved, MAIN_DISPATCHER)
     def flow_removed_handler(self, ev):
         msg = ev.msg
@@ -86,6 +96,9 @@ class ExampleSwitch13(app_manager.RyuApp):
                 self.redirect_protocol_syn(parser, datapath, self.port)
                 self.change_heralding_src_protocol(parser, datapath, self.port)
         
+        if dpid == t.br1_dpid:
+            pass
+        
     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
     def _packet_in_handler(self, ev):
         msg = ev.msg
@@ -103,16 +116,27 @@ class ExampleSwitch13(app_manager.RyuApp):
         dst = eth_pkt.dst
         ip_dst = None
         tcp_ports = ["22","21", "23", "1080"]
-        decoy_ip = ["10.2.3.12"]
+        decoy_ip = ["10.2.3.12", "10.2.3.13"]
         trigger_port = ["22,21"]
 
         # get the ipv4 destination address
         ipv4_pkt = pkt.get_protocol(ipv4.ipv4)
-        if ipv4_pkt:
-            ip_dst = ipv4_pkt.dst
-            src_ip = ipv4_pkt.src
+        arp_pkt = pkt.get_protocol(arp.arp)
+        if ipv4_pkt or arp_pkt:
+            if ipv4_pkt:
+                ip_dst = ipv4_pkt.dst
+                src_ip = ipv4_pkt.src
+                #print(ip_dst, "PACCHETTO IP")
+
+            elif arp_pkt:
+                ip_dst = arp_pkt.dst_ip
+                src_ip = arp_pkt.src_ip
+                #print(ip_dst, "PACCHETTO ARP")
+            
             dst_port = "22"
             # install a redirection flow
+            
+    
             
             
             if ip_dst in decoy_ip and src_ip not in t.host_redirected: 
@@ -150,10 +174,35 @@ class ExampleSwitch13(app_manager.RyuApp):
                 out_port = t.gw3.get_ovs_port()
             elif dst == t.ti_host1.get_MAC_addr():
                 out_port = t.ti_host1.get_ovs_port()
-                print(out_port)
 
 
             actions = [parser.OFPActionOutput(out_port)]
+
+            # install a flow to avoid packet_in next time.
+            if out_port != ofproto.OFPP_FLOOD:
+                match = parser.OFPMatch(eth_dst=dst)
+                self.add_flow(datapath, 1, match, actions, 0)
+
+            # construct packet_out message and send it.
+            out = parser.OFPPacketOut(datapath=datapath,
+                                    buffer_id=ofproto.OFP_NO_BUFFER,
+                                    in_port=in_port, actions=actions,
+                                    data=msg.data)
+            datapath.send_msg(out)
+
+        if dpid == t.br1_dpid:
+            if dst == t.dmz_service.get_MAC_addr():
+                out_port = t.dmz_service.get_ovs_port()
+            elif dst == t.gw10.get_MAC_addr():
+                out_port = t.gw10.get_ovs_port()
+            elif dst == t.gw11.get_MAC_addr():
+                out_port = t.gw11.get_ovs_port()
+            elif dst == t.ti_host1.get_MAC_addr():
+                out_port = t.ti_host1.get_ovs_port()
+
+            actions = [parser.OFPActionOutput(out_port)]
+            
+            
 
             # install a flow to avoid packet_in next time.
             if out_port != ofproto.OFPP_FLOOD:
@@ -311,6 +360,25 @@ class ExampleSwitch13(app_manager.RyuApp):
         # MTD PROACTIVE PORT SHUFFLING STARTING RULES
         self.redirect_protocol_syn(parser, datapath, self.port)
         self.change_heralding_src_protocol(parser, datapath, self.port)
+
+
+    def add_default_rules_br1(self, datapath):
+        parser = datapath.ofproto_parser
+
+        self.drop_icmp_srcIP_srcPORT_dstIP(parser, t.gw11.get_ip_addr(), 4, '10.2.11.100', datapath)
+        self.drop_tcp_srcIP_srcPORT_dstIP(parser, t.gw11.get_ip_addr(), 4, '10.2.11.100', datapath)
+
+        self.drop_icmp_srcIP_srcPORT_dstIP(parser, t.dmz_service.get_ip_addr(), 22, '10.1.11.100', datapath)
+        self.drop_tcp_srcIP_srcPORT_dstIP(parser, t.dmz_service.get_ip_addr(), 22, '10.1.11.100', datapath)
+
+
+        #self.drop_tcp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.heralding.get_ip_addr(), datapath)
+        #self.drop_icmp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.heralding.get_ip_addr(), datapath)
+        #self.drop_tcp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.service.get_ip_addr(), datapath)
+        #self.drop_icmp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.service.get_ip_addr(), datapath)    
+        #self.drop_tcp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.host.get_ip_addr(), datapath)
+        #self.drop_icmp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.host.get_ip_addr(), datapath)             
+     
 
 
     def send_set_async(self, datapath):

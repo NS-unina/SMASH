@@ -14,6 +14,7 @@ decoy_mapping = {
 }
 source_mapping = {
     "service": t.service,
+    "ssh_service": t.ssh_service,
 }
 index_decoy_mapping = {
     "cowrie1": man.index_honeypot.get("cowrie1",None),
@@ -39,6 +40,5 @@ subnet_mapping = {
 
 dpid_mapping = {
     "br0": t.br0_dpid,
-    "br1": t.br1_dpid
 }
 

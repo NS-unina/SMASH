@@ -11,16 +11,6 @@ services:
         privileged: true
         volumes:
           - ./configurations/int_host:/home
-    int_ssh_server_lan2:
-        build: ./images/ssh_imm
-        container_name: int_ssh_server_lan2
-        cap_add:
-          - NET_ADMIN 
-        tty: true
-        stdin_open: true
-        privileged: true
-        volumes:
-          - ./configurations/int_ssh_server:/home
     controller_lan2:
         build: ./images/ryu_imm
         container_name: controller_lan2

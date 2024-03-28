@@ -16,7 +16,7 @@ index_to_decoy_mapping = {
 }
 
 def add_new_host(name, subnet, mac,ip_address): 
-    url = 'http://10.1.3.1:8080/handle_post'  # URL host
+    url = 'http://10.2.3.1:8080/handle_post'  # URL host
     # Dati da inviare nel corpo della richiesta
     payload = {'name':name, 'subnet': subnet,  'mac':mac,'ip':ip_address }  
     subnet1 = t.subnet1

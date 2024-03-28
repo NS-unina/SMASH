@@ -72,8 +72,11 @@ def main():
 
     current_directory = os.path.dirname(os.path.abspath(__file__))
     vagrant_lan1_directory = os.path.join(current_directory,"lan1","vagrant","ubuntu")
+    vagrant_lan2_directory = os.path.join(current_directory,"lan2","vagrant","ubuntu")
     docker_lan1_directory = os.path.join(current_directory,"lan1","docker")
-    docker_compose_lan2_directory = os.path.join(docker_lan1_directory,"docker-build")
+    docker_lan2_directory = os.path.join(current_directory,"lan2","docker")
+    docker_compose_lan1_directory = os.path.join(docker_lan1_directory,"docker-build")
+    docker_compose_lan2_directory = os.path.join(docker_lan2_directory,"docker-build")
     
     
 
@@ -83,9 +86,11 @@ def main():
     script2_path = os.path.join(current_directory, 'create_net.sh')
     script3_path = os.path.join(current_directory, 'setup.sh')
 
-    flask_server_path = os.path.join(current_directory, 'lan1', 'app.py')
-    start_controller_path = os.path.join(current_directory, 'start_controller.sh')
-    start_int_host_path = os.path.join(current_directory, 'start_int_host.sh')
+    flask_server_lan1_path = os.path.join(current_directory, 'lan1', 'app.py')
+    start_controller_lan1_path = os.path.join(current_directory,'lan1', 'start_controller.sh')
+    start_int_host_lan1_path = os.path.join(current_directory, 'lan1','start_int_host.sh')
+    start_controller_lan2_path = os.path.join(current_directory,'lan2', 'start_controller.sh')
+    start_int_host_lan2_path = os.path.join(current_directory, 'lan2','start_int_host.sh')
 
     
     # Chiamata allo script reset.sh
@@ -98,21 +103,28 @@ def main():
     print("Topologia creata correttamente")
     time.sleep(5)
       # Avvia il server Flask in background
-    print("Avvio del server Flask in background:")
-    start_flask_server(flask_server_path)
+    print("Avvio del server Flask LAN1 in background:")
+    start_flask_server(flask_server_lan1_path)
 
+    start_docker_compose(docker_compose_lan1_directory)
+    time.sleep(2)
     start_docker_compose(docker_compose_lan2_directory)
     time.sleep(2)
 
     setup_docker_container(docker_lan1_directory)
+    time.sleep(2)
+    setup_docker_container(docker_lan2_directory)
 
     time.sleep(5)
 
-    run_script_in_a_different_windows(start_controller_path)
-    run_script_in_a_different_windows(start_int_host_path)
+    run_script_in_a_different_windows(start_controller_lan1_path)
+    run_script_in_a_different_windows(start_int_host_lan1_path)
+    run_script_in_a_different_windows(start_controller_lan2_path)
+    run_script_in_a_different_windows(start_int_host_lan2_path)
     
     time.sleep(2)
     start_vagrant(vagrant_lan1_directory)
+    start_vagrant(vagrant_lan2_directory)
    
 
 
