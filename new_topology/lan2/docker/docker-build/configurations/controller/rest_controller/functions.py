@@ -65,7 +65,7 @@ def add_new_honeypot(name,host,s_hp,ports_hp):
         print("Messaggio di errore:", response.text)
     
     # Crea un nuovo oggetto Honeypot
-    new_honeypot = Honeypot(name, host.get_ip_addr(), host.get_MAC_addr(), host.get_ovs_port(), host.get_netmask(), host.subnet())
+    new_honeypot = Honeypot(name, host.get_ip_addr(), host.get_MAC_addr(), host.get_ovs_port(), host.get_netmask(), host.get_subnet())
     # Lo aggiunge alla lista di tutti gli honeypot attivi
     t.honeypots_list.append(new_honeypot)
 

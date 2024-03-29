@@ -552,7 +552,7 @@ class ExampleSwitch13(app_manager.RyuApp):
 
         if decoy_index is None and tcp_port != "23":
             print("Creazione nuovo honeypot heralding")
-            host = t.ti_host2
+            host = t.ti_host1
             self.create_new_honeypot(host)
             decoy_index = u.find_free_honeypot_by_service(man.sb, man.sm, port_index)
         elif decoy_index is None and tcp_port == "23": 
