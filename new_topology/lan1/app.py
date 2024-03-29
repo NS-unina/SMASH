@@ -2,11 +2,35 @@ from flask import Flask, request, jsonify
 import os
 import subprocess
 import random
+import sys
+import signal
 
 app = Flask(__name__)
 
 # 172.28.0.2 172.28.0.3
 #ip_address_container = [2,3]
+
+# Costruisci il percorso del file basato sulla directory corrente
+file_name = "Vagrantfile"
+file_path = os.path.join(os.getcwd(), 'vagrant', 'ubuntu',file_name)
+
+# Leggi il contenuto iniziale del file YAML
+with open(file_path, 'r') as f:
+    initial_config = f.read()
+
+# Definisci la funzione da eseguire al momento dell'arresto del server
+def cleanup():
+    # Scrivi il contenuto iniziale nel file YAML per ripristinarlo
+    with open(file_path, 'w') as f:
+        f.write(initial_config)
+
+# Collega la funzione di cleanup al segnale di interruzione (CTRL+C)
+def signal_handler(sig, frame):
+    cleanup()
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, signal_handler)
+
 
 occupied_port = [3200,3201,3202,3203,3204,3205,3206,3207,3208,3209,3210,3211,3212,3213]
 
