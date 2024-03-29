@@ -123,8 +123,8 @@ def main():
     run_script_in_a_different_windows(start_int_host_lan2_path)
     
     time.sleep(2)
-    start_vagrant(vagrant_lan1_directory)
-    start_vagrant(vagrant_lan2_directory)
+    #start_vagrant(vagrant_lan1_directory)
+    #start_vagrant(vagrant_lan2_directory)
    
 
 

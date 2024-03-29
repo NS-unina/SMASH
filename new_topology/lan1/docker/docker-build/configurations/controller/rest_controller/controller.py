@@ -27,10 +27,13 @@ from ryu.lib.packet import tcp, icmp, arp, ipv4, vlan
 import random
 from topology import NetworkTopology
 from ti_management import HoneypotManager
+from dmz_ti_management import HoneypotManagerDmz
 import mapping as map
+import dmz_mapping as dmz_map
 import functions as f
 t = NetworkTopology()
 man = HoneypotManager()
+man_dmz = HoneypotManagerDmz()
 
 class ExampleSwitch13(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
@@ -116,7 +119,7 @@ class ExampleSwitch13(app_manager.RyuApp):
         dst = eth_pkt.dst
         ip_dst = None
         tcp_ports = ["22","21", "23", "1080"]
-        decoy_ip = ["10.1.3.12", "10.1.3.13"]
+        decoy_ip = ["10.1.3.12", "10.1.3.18", "10.1.10.10"]
         trigger_port = ["22,21"]
 
         # get the ipv4 destination address
@@ -137,20 +140,27 @@ class ExampleSwitch13(app_manager.RyuApp):
             # install a redirection flow
             
             
-            if ip_dst in decoy_ip and src_ip not in t.host_redirected: 
+            if ip_dst in decoy_ip and src_ip not in t.host_redirected:
+                
                 source = t.service
                 gw= t.gw1
                 host = t.find_host_by_ip(src_ip)
                 subnet = host.get_subnet()
+                print(host.get_ip_addr())
                 br_dpid = subnet.get_br()
-               
 
-                for tcp_port in tcp_ports:
-                    spawn(self.redirect_traffic,self,src_ip,tcp_port,source,gw,subnet,br_dpid)                  
-                    print("REGOLA REDIRECTION INSERITA DIRETTAMENTE DAL CONTROLLER")    
 
-           
-        
+                if br_dpid == t.br1_dpid:
+                    source = t.dmz_service
+                    gw = t.gw10
+                    for tcp_port in tcp_ports:
+                        spawn(self.redirect_traffic_dmz,self,src_ip,tcp_port,source,gw,subnet,br_dpid)                  
+                        print("REGOLA REDIRECTION INSERITA DIRETTAMENTE DAL CONTROLLER DMZ")   
+                else:
+                    for tcp_port in tcp_ports:
+                        spawn(self.redirect_traffic,self,src_ip,tcp_port,source,gw,subnet,br_dpid)                  
+                        print("REGOLA REDIRECTION INSERITA DIRETTAMENTE DAL CONTROLLER")
+
         # get the received port number from packet_in message.
         in_port = msg.match['in_port']
         out_port = ofproto.OFPP_FLOOD
@@ -207,6 +217,8 @@ class ExampleSwitch13(app_manager.RyuApp):
                 out_port = t.ti_host1.get_ovs_port()
             elif dst == t.ti_host2.get_MAC_addr():
                 out_port = t.ti_host2.get_ovs_port()
+            elif dst == t.ti_host_dmz.get_MAC_addr():
+                out_port = t.ti_host_dmz.get_ovs_port()
 
             actions = [parser.OFPActionOutput(out_port)]
             
@@ -416,6 +428,16 @@ class ExampleSwitch13(app_manager.RyuApp):
         self.drop_icmp_srcIP_srcPORT_dstIP(parser, t.dmz_service.get_ip_addr(), 22, t.elk_if2.get_ip_addr(), datapath)
         self.drop_tcp_srcIP_srcPORT_dstIP(parser, t.dmz_service.get_ip_addr(), 22, t.elk_if2.get_ip_addr(), datapath)
 
+         # PERMIT tcp input to honeyfarm
+        self.permit_tcp_dstIP_dstPORT(parser, t.ti_host_dmz.get_ip_addr(), t.ti_host_dmz.get_ovs_port(), 2022, datapath)
+        self.permit_tcp_dstIP_dstPORT(parser, t.ti_host_dmz.get_ip_addr(), t.ti_host_dmz.get_ovs_port(), 3022, datapath)
+        self.permit_tcp_dstIP_dstPORT(parser, t.ti_host_dmz.get_ip_addr(), t.ti_host_dmz.get_ovs_port(), 22, datapath)
+        self.permit_tcp_dstIP_dstPORT(parser, t.ti_host_dmz.get_ip_addr(), t.ti_host_dmz.get_ovs_port(), 23, datapath)
+        
+
+        self.forward_to_controller(parser, t.dmz_heralding.get_ip_addr(),datapath)
+
+
         #self.drop_tcp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.heralding.get_ip_addr(), datapath)
         #self.drop_icmp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.heralding.get_ip_addr(), datapath)
         #self.drop_tcp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.service.get_ip_addr(), datapath)
@@ -546,7 +568,8 @@ class ExampleSwitch13(app_manager.RyuApp):
 
 
     def redirect_traffic (self, dpid,src_ip,tcp_port,source,gw,subnet,br_dpid):
-        port_index = map.index_port_mapping.get(tcp_port,None)  
+        port_index = map.index_port_mapping.get(tcp_port,None)
+  
         decoy_index = u.find_free_honeypot_by_service(man.sb, man.sm, port_index)
 
 
@@ -572,6 +595,38 @@ class ExampleSwitch13(app_manager.RyuApp):
         t.host_redirected.append(src_ip)
         self.redirect_to(br_dpid,src_ip,tcp_port,source,decoy,gw,destination_port)
         self.change_decoy_src(br_dpid, src_ip,subnet,decoy,tcp_port,gw,source,destination_port)
+
+    def redirect_traffic_dmz (self, dpid,src_ip,tcp_port,source,gw,subnet,br_dpid):
+        port_index = dmz_map.index_port_mapping.get(tcp_port,None)
+  
+        decoy_index = u.find_free_honeypot_by_service(man_dmz.sb, man_dmz.sm, port_index)
+        print("DMZ")
+
+
+        if decoy_index is None and tcp_port != "23":
+            print("Creazione nuovo honeypot heralding in dmz")
+            host = t.ti_host_dmz
+            self.create_new_honeypot(host)
+            decoy_index = u.find_free_honeypot_by_service(man_dmz.sb, man_dmz.sm, port_index)
+        elif decoy_index is None and tcp_port == "23": 
+            print("Creazione nuovo host cowrie")
+            #TO DO
+            #self.create_new_host_cowrie()
+            #decoy_index = u.find_free_honeypot_by_service(man.sb, man.sm, port_index)
+
+            if(decoy_index) is None:
+                print("Non è stato possibile creare un nuovo honeypot")
+                return
+        decoy = f.index_to_decoy_mapping_dmz.get (decoy_index,None)
+        print("L'honeypot libero per il servizio ", tcp_port, "è :", decoy.get_name())
+
+        destination_port = man_dmz.ports[decoy_index][port_index]
+        man_dmz.sb[decoy_index][port_index] = 1 
+        
+        print("Redirection dell'utente: ",src_ip, "del service:", source.get_ip_addr(), "All'honeypot: ", decoy.get_ip_addr(), "da porta: ", tcp_port, "to: ", destination_port)
+        t.host_redirected.append(src_ip)
+        self.redirect_to(br_dpid,src_ip,tcp_port,source,decoy,gw,destination_port)
+        self.change_decoy_src(br_dpid, src_ip,subnet,decoy,tcp_port,gw,source,destination_port)
     
     def create_new_honeypot(self,host):
         index = max(man.index_honeypot.values()) + 1
@@ -582,6 +637,26 @@ class ExampleSwitch13(app_manager.RyuApp):
         new_ftp_port= f.find_free_port(man.ports_host1,4000)
         man.ports_host1.append(new_ftp_port)
         new_socks_port= f.find_free_port(man.ports_host1,4000)
+        man.ports_host1.append(new_socks_port)
+        s_hp = [1, 0, 1, 1]
+        ports_hp = [0, 0, 0, 0]
+        ports_hp[0] = new_ssh_port
+        ports_hp[1] = 0
+        ports_hp[2] = new_ftp_port
+        ports_hp[3] = new_socks_port
+        print("Porte scelte",ports_hp)
+        print("Porte host",man.ports_host1)
+        f.add_new_honeypot(name,host,s_hp,ports_hp)
+
+    def create_new_honeypot_dmz(self,host):
+        index = max(man_dmz.index_honeypot.values()) + 1
+        #IL NOME SCELTO SARA DEL TIPO "heralding5"
+        name ="heralding"+str(index)
+        new_ssh_port= f.find_free_port(man_dmz.ports_host1,4000)
+        man.ports_host1.append(new_ssh_port)
+        new_ftp_port= f.find_free_port(man_dmz.ports_host1,4000)
+        man.ports_host1.append(new_ftp_port)
+        new_socks_port= f.find_free_port(man_dmz.ports_host1,4000)
         man.ports_host1.append(new_socks_port)
         s_hp = [1, 0, 1, 1]
         ports_hp = [0, 0, 0, 0]

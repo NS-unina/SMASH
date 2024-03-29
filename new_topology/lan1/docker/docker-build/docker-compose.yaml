@@ -52,3 +52,13 @@ services:
         privileged: true
         volumes:
           - ./configurations/ssh_server:/home
+    heralding:
+        build: ./images/heralding
+        container_name: heralding
+        cap_add:
+          - NET_ADMIN 
+        tty: true
+        stdin_open: true
+        privileged: true
+        volumes:
+          - ./configurations/heralding:/home

@@ -2,7 +2,7 @@
 source functions.sh
 
 
-vlans1=("vlan11" "vlan12" "vlan13" "vlan16" "vlan17")
+vlans1=("vlan11" "vlan12" "vlan13" "vlan16" "vlan17" "vlan18")
 vlans2=("vlan21" "vlan22" "vlan23" "vlan26" "vlan27")
 
 setup_ovs_bridge "br0_lan1" "br1_lan1" "br0_lan2" "br1_lan2" "br_lan3" "br_lan4" "br_wan"
@@ -34,6 +34,7 @@ sudo ovs-vsctl set-controller br0_lan1 tcp:10.1.5.100:6633
 
 create_vlan "vlan16" "br1_lan1" "10" "10.1.10.1/24" "8a:ae:02:40:8f:93" "40"
 create_vlan "vlan17" "br1_lan1" "11" "10.1.11.1/24" "ea:6a:20:a0:96:11" "41"
+create_vlan "vlan18" "br1_lan1" "12" "10.1.12.1/24" "ea:6a:20:a0:46:12" "42"
 
 echo "Connect br1_lan1 to controller 10.1.11.100:6633"
 sudo ovs-vsctl set-controller br1_lan1 tcp:10.1.11.100:6633

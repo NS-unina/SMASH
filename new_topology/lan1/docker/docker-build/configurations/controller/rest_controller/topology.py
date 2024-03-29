@@ -25,6 +25,7 @@ class NetworkTopology:
         # ovs2
         self.subnet4 = Subnet('S4', '10.1.10.0', '255.255.255.0',self.br1_dpid)
         self.subnet5 = Subnet('S5', '10.1.11.0', '255.255.255.0',self.br1_dpid)
+        self.subnet6 = Subnet('S6', '10.1.12.0', '255.255.255.0',self.br1_dpid)
 
         # Nodes
         # Subnet 1
@@ -46,7 +47,7 @@ class NetworkTopology:
 
         self.honeypots_list = [self.cowrie1, self.cowrie2, self.heralding1, self.heralding2, self.heralding3, self.heralding4]
         self.hosts_list= [self.ti_host1, self.ti_host2]
-        self.host_redirected = ["10.1.5.1", "10.1.3.1"]
+        self.host_redirected = ["10.1.5.1", "10.1.3.1", "10.1.4.1", "10.1.10.1", "10.1.11.1", "10.1.12.1"]
 
         self.elk_if1 = Host('ELK_IF1', '10.1.5.10', '08:00:27:7d:b7:b8', 8, '255.255.255.0', self.subnet3)
         self.elk_if2 = Host('ELK_IF2', '10.1.11.10', '08:00:27:f5:6b:90', 13, '255.255.255.0', self.subnet5)
@@ -57,7 +58,12 @@ class NetworkTopology:
         self.dmz_cowrie = Honeypot('dmz_cowrie', '10.1.10.13', '08:00:27:b7:0e:59', 20, '255.255.255.0', self.subnet4)
         self.dmz_host = Host('dmz_host', '10.1.10.12', '08:00:27:b6:d0:68', 23, '255.255.255.0', self.subnet4)
 
-        self.nodes = [self.host, self.service,self.ssh_service,self.heralding,self.elk_if1,self.elk_if2,self.dmz_heralding,self.dmz_service,self.dmz_service1,self.dmz_cowrie,self.dmz_host]
+        # Subnet 6
+        self.ti_host_dmz = Host('ti_host_dmz', '10.1.12.10', '08:00:27:b7:0e:28', 18, '255.255.255.0', self.subnet6)
+        self.cowrie_dmz = Host('cowrie_dmz', '10.1.12.10', '08:00:27:b7:0e:28', 18, '255.255.255.0', self.subnet6)
+        self.heralding1_dmz = Host('heralding1_dmz', '10.1.12.10', '08:00:27:b7:0e:28', 18, '255.255.255.0', self.subnet6)
+        self.heralding2_dmz = Host('heralding2_dmz', '10.1.12.10', '08:00:27:b7:0e:28', 18, '255.255.255.0', self.subnet6)
+        self.nodes = [self.host, self.service,self.ssh_service,self.heralding,self.elk_if1,self.elk_if2,self.dmz_heralding,self.dmz_service,self.dmz_service1,self.dmz_cowrie,self.dmz_host, self.cowrie_dmz, self.heralding1_dmz, self.heralding2_dmz]
         
         
         # Gateways
@@ -66,10 +72,11 @@ class NetworkTopology:
         self.gw2 = Gateway('gw2', '10.1.4.1', '16:67:1f:3f:86:a7', 5, '255.255.255.0',self.subnet2)
         self.gw3 = Gateway('gw3', '10.1.5.1', 'fe:46:67:35:0d:d1', 7, '255.255.255.0', self.subnet3)
         # ovs2
-        self.gw10 = Gateway('gw10', '10.1.10.1', '8a:ae:02:40:8f:83', 10, '255.255.255.0', self.subnet4)
-        self.gw11 = Gateway('gw11', '10.1.11.1', 'ea:6a:20:a0:96:10', 11, '255.255.255.0', self.subnet5)
+        self.gw10 = Gateway('gw10', '10.1.10.1', '8a:ae:02:40:8f:93', 10, '255.255.255.0', self.subnet4)
+        self.gw11 = Gateway('gw11', '10.1.11.1', 'ea:6a:20:a0:96:11', 11, '255.255.255.0', self.subnet5)
+        self.gw12 = Gateway('gw12', '10.1.12.1', 'ea:6a:20:a0:46:12', 12, '255.255.255.0', self.subnet6)
 
-        self.gateway = [self.gw1,self.gw2,self.gw3, self.gw10, self.gw11]
+        self.gateway = [self.gw1,self.gw2,self.gw3, self.gw10, self.gw11, self.gw12]
         # Network
         self.network1 = Network('Net1')
         self.network2 = Network('Net2')
@@ -119,6 +126,12 @@ class NetworkTopology:
         self.subnet5.add_node(self.elk_if2, self.elk_if2.get_ovs_port())
         self.subnet5.add_node(self.gw11, self.gw11.get_ovs_port())
 
+        #Subnet 6
+
+        self.subnet6.add_node(self.gw12, self.gw12.get_ovs_port())
+        self.subnet6.add_node(self.ti_host_dmz,self.ti_host_dmz.get_ovs_port())
+
+
     def add_subnets_to_networks(self):
         # Aggiungi subnet alle reti
         self.network1.add_subnet(self.subnet1)
@@ -127,6 +140,7 @@ class NetworkTopology:
 
         self.network2.add_subnet(self.subnet4)
         self.network2.add_subnet(self.subnet5)
+        self.network2.add_subnet(self.subnet6)
 
 
     def find_free_mac_address(self):

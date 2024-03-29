@@ -5,7 +5,7 @@ echo "Restoring Network ..."
 
 vlans1=("vlan11" "vlan12" "vlan13" "vlan16" "vlan17")
 vlans2=("vlan21" "vlan22" "vlan23" "vlan26" "vlan27")
-taps1=("tap1" "tap2" "tap3" "tap4" "tap7" "tap5" "tap6" "tap10" "tap12" "tap13" "tap11" )
+taps1=("tap1" "tap2" "tap3" "tap4" "tap7" "tap5" "tap6" "tap10" "tap12" "tap13" "tap11" "tap18" )
 taps2=("tap21" "tap22" "tap23" "tap26")
 
 #TAP create_tap(tap_name, bridge_name, tag, ofport)
@@ -21,6 +21,7 @@ create_tap "tap10" "br1_lan1" "10" "2"
 create_tap "tap12" "br1_lan1" "10" "20"
 create_tap "tap13" "br1_lan1" "10" "21"
 create_tap "tap11" "br1_lan1" "11" "13"
+create_tap "tap18" "br1_lan1" "12" "18"
 
 #LAN2
 create_tap "tap21" "br0_lan2" "21" "31"
@@ -34,6 +35,7 @@ setup_vlan_interface "vlan12" "10.1.4.1/24" "16:67:1f:3f:86:a7"
 setup_vlan_interface "vlan13" "10.1.5.1/24" "fe:46:67:35:0d:d1"
 setup_vlan_interface "vlan16" "10.1.10.1/24" "8a:ae:02:40:8f:93"
 setup_vlan_interface "vlan17" "10.1.11.1/24" "ea:6a:20:a0:96:11"
+setup_vlan_interface "vlan18" "10.1.12.1/24" "ea:6a:20:a0:46:12"
 
 create_masquerade_rules "${taps1[@]}" "${vlans1[@]}"
 create_vlan_forward_rules "${vlans1[@]}"

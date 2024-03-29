@@ -75,3 +75,18 @@ sudo ovs-vsctl -- set port h2_l tag=10
 sudo iptables -t nat -A POSTROUTING -o h2_l -j MASQUERADE
 
 
+
+if sudo ovs-vsctl --data=bare --no-heading --columns=name find interface external_ids:container_id=heralding \
+   external_ids:container_iface=eth1 | grep -q "h9_l"; then
+        sudo ./my-ovs-docker del-port br0_lan1 eth1 heralding
+fi
+
+sudo docker stop heralding
+sudo docker start heralding
+
+sudo ./my-ovs-docker add-port br0_lan1 eth1 heralding h9 24 --ipaddress=10.1.3.18/24 --macaddress=08:00:27:b6:d0:70
+sudo ovs-vsctl -- set port h9_l tag=1
+sudo iptables -t nat -A POSTROUTING -o h9_l -j MASQUERADE
+
+
+
