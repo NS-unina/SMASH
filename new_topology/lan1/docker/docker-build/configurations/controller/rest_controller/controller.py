@@ -428,11 +428,44 @@ class ExampleSwitch13(app_manager.RyuApp):
         self.drop_icmp_srcIP_srcPORT_dstIP(parser, t.dmz_service.get_ip_addr(), 22, t.elk_if2.get_ip_addr(), datapath)
         self.drop_tcp_srcIP_srcPORT_dstIP(parser, t.dmz_service.get_ip_addr(), 22, t.elk_if2.get_ip_addr(), datapath)
 
+        # PERMIT tcp input from service to heralding
+        self.permit_tcp_host1_host2(parser, t.dmz_service.get_ip_addr(), t.dmz_heralding.get_ip_addr(), t.dmz_heralding.get_ovs_port(), datapath)
+        self.permit_tcp_host1_host2(parser, t.dmz_service1.get_ip_addr(), t.dmz_heralding.get_ip_addr(), t.dmz_heralding.get_ovs_port(), datapath)
+        # PERMIT tcp input from gateway and elk to heralding
+        self.permit_tcp_host1_host2(parser, t.gw11.get_ip_addr(), t.dmz_heralding.get_ip_addr(), t.dmz_heralding.get_ovs_port(), datapath)
+        self.permit_tcp_host1_host2(parser, t.elk_if2.get_ip_addr(), t.dmz_heralding.get_ip_addr(), t.dmz_heralding.get_ovs_port(), datapath)
+
+        # PERMIT tcp input to heralding port 25
+        self.permit_tcp_dstIP_dstPORT(parser, t.dmz_heralding.get_ip_addr(), t.dmz_heralding.get_ovs_port(), 25, datapath)
+
+        # PERMIT tcp input from service to honeyfarm
+        self.permit_tcp_host1_host2(parser, t.dmz_service.get_ip_addr(), t.ti_host_dmz.get_ip_addr(), t.ti_host_dmz.get_ovs_port(), datapath)
+        self.permit_tcp_host1_host2(parser, t.dmz_service1.get_ip_addr(), t.ti_host_dmz.get_ip_addr(), t.ti_host_dmz.get_ovs_port(), datapath)
+        # PERMIT tcp input from gateway and elk to heralding
+        self.permit_tcp_host1_host2(parser, t.gw10.get_ip_addr(), t.dmz_host.get_ip_addr(), t.dmz_host.get_ovs_port(), datapath)
+        self.permit_tcp_host1_host2(parser, t.elk_if2.get_ip_addr(), t.ti_host_dmz.get_ip_addr(), t.ti_host_dmz.get_ovs_port(), datapath)
+
+        self.permit_tcp_host1_host2(parser, t.gw12.get_ip_addr(), t.ti_host_dmz.get_ip_addr(), t.ti_host_dmz.get_ovs_port(), datapath)
+        self.permit_tcp_host1_host2(parser, t.gw10.get_ip_addr(), t.ti_host_dmz.get_ip_addr(), t.ti_host_dmz.get_ovs_port(), datapath)
+
+        #self.permit_tcp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.ti_host_dmz.get_ip_addr(), t.ti_host_dmz.get_ovs_port(), datapath)
+        self.permit_tcp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.dmz_service1.get_ip_addr(), t.dmz_service1.get_ovs_port(), datapath)
+        self.permit_tcp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.dmz_service.get_ip_addr(), t.dmz_service.get_ovs_port(), datapath)
+
+
+        self.permit_tcp_dstIP_dstPORT(parser, t.dmz_service.get_ip_addr(), t.dmz_service.get_ovs_port(), 22, datapath)
+        self.permit_tcp_dstIP_dstPORT(parser, t.dmz_service.get_ip_addr(), t.dmz_service.get_ovs_port(), 23, datapath)
+
+        self.permit_tcp_dstIP_dstPORT(parser, t.dmz_service1.get_ip_addr(), t.dmz_service1.get_ovs_port(), 22, datapath)
+        self.permit_tcp_dstIP_dstPORT(parser, t.dmz_service1.get_ip_addr(), t.dmz_service1.get_ovs_port(), 23, datapath)
+
          # PERMIT tcp input to honeyfarm
         self.permit_tcp_dstIP_dstPORT(parser, t.ti_host_dmz.get_ip_addr(), t.ti_host_dmz.get_ovs_port(), 2022, datapath)
         self.permit_tcp_dstIP_dstPORT(parser, t.ti_host_dmz.get_ip_addr(), t.ti_host_dmz.get_ovs_port(), 3022, datapath)
         self.permit_tcp_dstIP_dstPORT(parser, t.ti_host_dmz.get_ip_addr(), t.ti_host_dmz.get_ovs_port(), 22, datapath)
         self.permit_tcp_dstIP_dstPORT(parser, t.ti_host_dmz.get_ip_addr(), t.ti_host_dmz.get_ovs_port(), 23, datapath)
+
+
         
 
         self.forward_to_controller(parser, t.dmz_heralding.get_ip_addr(),datapath)

@@ -54,10 +54,10 @@ pip install --upgrade pip
 pip install --upgrade -r requirements.txt
 pip install pymongo
 
-sudo cp /home/claudio/ubuntu/ti_host1/conf.sh /home/cowrie1
-sudo cp /home/claudio/ubuntu/ti_host1/start.sh /home/vagrant
+sudo cp /home/claudio/ubuntu/ti_host_dmz/conf.sh /home/cowrie1
+sudo cp /home/claudio/ubuntu/ti_host_dmz/start.sh /home/vagrant
 
-sudo cp /home/claudio/ubuntu/ti_host1/cowrie.cfg /home/cowrie1/cowrie/etc
+sudo cp /home/claudio/ubuntu/ti_host_dmz/cowrie.cfg /home/cowrie1/cowrie/etc
 sudo touch /etc/authbind/byport/22
 sudo chown cowrie1:cowrie1 /etc/authbind/byport/22
 sudo chmod 770 /etc/authbind/byport/22
@@ -80,17 +80,17 @@ sudo dpkg -i metricbeat-8.7.0-amd64.deb
 curl -L -O https://artifacts.elastic.co/downloads/beats/auditbeat/auditbeat-8.7.0-amd64.deb
 sudo dpkg -i auditbeat-8.7.0-amd64.deb
 
-chmod +x home/claudio/ubuntu/ti_host1/docker/script.sh
+chmod +x home/claudio/ubuntu/ti_host_dmz/docker/script.sh
 
-sudo cp /home/claudio/ubuntu/ti_host1/filebeat.yml /etc/filebeat/filebeat.yml
+sudo cp /home/claudio/ubuntu/ti_host_dmz/filebeat.yml /etc/filebeat/filebeat.yml
 sudo systemctl start filebeat
 sudo systemctl enable filebeat
 
-sudo cp /home/claudio/ubuntu/ti_host1/metricbeat.yml /etc/metricbeat/metricbeat.yml
+sudo cp /home/claudio/ubuntu/ti_host_dmz/metricbeat.yml /etc/metricbeat/metricbeat.yml
 sudo service metricbeat start
 sudo systemctl enable metricbeat
 
-sudo cp /home/claudio/ubuntu/ti_host1/auditbeat.yml /etc/auditbeat/auditbeat.yml
+sudo cp /home/claudio/ubuntu/ti_host_dmz/auditbeat.yml /etc/auditbeat/auditbeat.yml
 sudo service auditbeat start
 sudo systemctl enable auditbeat
 EOF

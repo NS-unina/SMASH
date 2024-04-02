@@ -109,10 +109,10 @@ def main():
     start_docker_compose(docker_compose_lan1_directory)
     time.sleep(2)
     start_docker_compose(docker_compose_lan2_directory)
-    time.sleep(2)
+    time.sleep(7)
 
     setup_docker_container(docker_lan1_directory)
-    time.sleep(2)
+    time.sleep(4)
     setup_docker_container(docker_lan2_directory)
 
     time.sleep(5)
@@ -123,7 +123,7 @@ def main():
     run_script_in_a_different_windows(start_int_host_lan2_path)
     
     time.sleep(2)
-    #start_vagrant(vagrant_lan1_directory)
+    start_vagrant(vagrant_lan1_directory)
     #start_vagrant(vagrant_lan2_directory)
    
 
