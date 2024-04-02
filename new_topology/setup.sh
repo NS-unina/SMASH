@@ -3,7 +3,7 @@ source functions.sh
 
 echo "Restoring Network ..."
 
-vlans1=("vlan11" "vlan12" "vlan13" "vlan16" "vlan17")
+vlans1=("vlan11" "vlan12" "vlan13" "vlan16" "vlan17" "vlan18")
 vlans2=("vlan21" "vlan22" "vlan23" "vlan26" "vlan27")
 taps1=("tap1" "tap2" "tap3" "tap4" "tap7" "tap5" "tap6" "tap10" "tap12" "tap13" "tap11" "tap18" )
 taps2=("tap21" "tap22" "tap23" "tap26")
@@ -50,16 +50,3 @@ setup_vlan_interface "vlan27" "10.2.11.1/24" "ea:6a:20:a0:26:11"
 create_masquerade_rules "${taps2[@]}" "${vlans2[@]}"
 create_vlan_forward_rules "${vlans2[@]}"
 
-# if sudo ovs-ofctl show br1 | grep -q "(wlp0s20f3)"; then
-#    sudo ovs-vsctl del-port wlp0s20f3
-# fi
-# sudo ovs-vsctl add-port br1 wlp0s20f3 -- set interface wlp0s20f3 ofport=10
-# sudo ifconfig wlp0s20f3 0
-# sudo ifconfig br1 192.168.92.106/24 up
-# sudo route add default gw 192.168.92.68 br1
-
-# #sudo ifconfig br1 192.168.1.16/24 up
-# #sudo route add default gw 192.168.1.1 br1
-# sudo iptables -t nat -A POSTROUTING -o br1 -j MASQUERADE
-# sudo iptables -t nat -A POSTROUTING -o wlp0s20f3 -j MASQUERADE
-# sudo sed -i '1s/^/nameserver 8.8.8.8\n/' /etc/resolv.conf

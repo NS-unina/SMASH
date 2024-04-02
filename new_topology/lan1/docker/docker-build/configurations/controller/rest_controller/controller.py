@@ -451,6 +451,7 @@ class ExampleSwitch13(app_manager.RyuApp):
         #self.permit_tcp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.ti_host_dmz.get_ip_addr(), t.ti_host_dmz.get_ovs_port(), datapath)
         self.permit_tcp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.dmz_service1.get_ip_addr(), t.dmz_service1.get_ovs_port(), datapath)
         self.permit_tcp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.dmz_service.get_ip_addr(), t.dmz_service.get_ovs_port(), datapath)
+        self.permit_tcp_host1_host2(parser, t.dmz_host.get_ip_addr(), t.ti_host_dmz.get_ip_addr(), t.ti_host_dmz.get_ovs_port(), datapath)
 
 
         self.permit_tcp_dstIP_dstPORT(parser, t.dmz_service.get_ip_addr(), t.dmz_service.get_ovs_port(), 22, datapath)

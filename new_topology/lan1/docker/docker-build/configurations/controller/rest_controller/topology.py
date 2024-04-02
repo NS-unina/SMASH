@@ -72,9 +72,9 @@ class NetworkTopology:
         self.gw2 = Gateway('gw2', '10.1.4.1', '16:67:1f:3f:86:a7', 5, '255.255.255.0',self.subnet2)
         self.gw3 = Gateway('gw3', '10.1.5.1', 'fe:46:67:35:0d:d1', 7, '255.255.255.0', self.subnet3)
         # ovs2
-        self.gw10 = Gateway('gw10', '10.1.10.1', '8a:ae:02:40:8f:93', 10, '255.255.255.0', self.subnet4)
-        self.gw11 = Gateway('gw11', '10.1.11.1', 'ea:6a:20:a0:96:11', 11, '255.255.255.0', self.subnet5)
-        self.gw12 = Gateway('gw12', '10.1.12.1', 'ea:6a:20:a0:46:12', 12, '255.255.255.0', self.subnet6)
+        self.gw10 = Gateway('gw10', '10.1.10.1', '8a:ae:02:40:8f:93', 40, '255.255.255.0', self.subnet4)
+        self.gw11 = Gateway('gw11', '10.1.11.1', 'ea:6a:20:a0:96:11', 41, '255.255.255.0', self.subnet5)
+        self.gw12 = Gateway('gw12', '10.1.12.1', 'ea:6a:20:a0:46:12', 42, '255.255.255.0', self.subnet6)
 
         self.gateway = [self.gw1,self.gw2,self.gw3, self.gw10, self.gw11, self.gw12]
         # Network
