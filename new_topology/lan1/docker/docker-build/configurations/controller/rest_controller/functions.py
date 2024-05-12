@@ -1,6 +1,6 @@
 from topology import NetworkTopology
 import requests
-import aiohttp
+#import aiohttp
 import mapping as map
 import dmz_mapping as dmz_map
 from ti_management import HoneypotManager
@@ -64,6 +64,7 @@ def add_new_host(name, subnet, mac,ip_address):
 
 def add_new_honeypot(name,host,s_hp,ports_hp): 
     url = 'http://' + host.get_ip_addr() + ':8080/handle_post'  # URL host
+    print(url)
     # Dati da inviare nel corpo della richiesta
     payload = {'name': name, 'ssh_port': ports_hp[man.SSH_INDEX], 'ftp_port': ports_hp[man.FTP_INDEX], 'socks_port': ports_hp[man.SOCKS5_INDEX]}  
 

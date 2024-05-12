@@ -158,7 +158,8 @@ class ExampleSwitch13(app_manager.RyuApp):
                         print("REGOLA REDIRECTION INSERITA DIRETTAMENTE DAL CONTROLLER DMZ")   
                 else:
                     for tcp_port in tcp_ports:
-                        spawn(self.redirect_traffic,self,src_ip,tcp_port,source,gw,subnet,br_dpid)                  
+                        spawn(self.redirect_traffic,self,src_ip,tcp_port,source,gw,subnet,br_dpid)
+                        #self.redirect_traffic(self,src_ip,tcp_port,source,gw,subnet,br_dpid)                 
                         print("REGOLA REDIRECTION INSERITA DIRETTAMENTE DAL CONTROLLER")
 
         # get the received port number from packet_in message.
@@ -326,8 +327,8 @@ class ExampleSwitch13(app_manager.RyuApp):
         # DROP ti_host1 to controller    
         self.drop_icmp_srcIP_srcMAC_dstIP(parser, t.ti_host1.get_ip_addr(), t.ti_host1.get_MAC_addr(), 
                                          '10.1.5.100', datapath)    
-        self.drop_tcp_srcIP_srcMAC_dstIP(parser, t.ti_host1.get_ip_addr(), t.ti_host1.get_MAC_addr(), 
-                                         '10.1.5.100', datapath)
+        #self.drop_tcp_srcIP_srcMAC_dstIP(parser, t.ti_host1.get_ip_addr(), t.ti_host1.get_MAC_addr(), 
+        #                                 '10.1.5.100', datapath)
         
         # DROP ti_host2 to controller
         self.drop_icmp_srcIP_srcMAC_dstIP(parser, t.ti_host2.get_ip_addr(), t.ti_host2.get_MAC_addr(), 
@@ -367,9 +368,13 @@ class ExampleSwitch13(app_manager.RyuApp):
 
         # PERMIT tcp input from service to honeyfarm
         self.permit_tcp_host1_host2(parser, t.service.get_ip_addr(), t.ti_host1.get_ip_addr(), t.ti_host1.get_ovs_port(), datapath)
+        self.permit_tcp_host1_host2(parser, t.host.get_ip_addr(), t.ti_host1.get_ip_addr(), t.ti_host1.get_ovs_port(), datapath)
+        self.permit_tcp_host1_host2(parser, t.host.get_ip_addr(), t.ti_host2.get_ip_addr(), t.ti_host2.get_ovs_port(), datapath)
         self.permit_tcp_host1_host2(parser, t.service.get_ip_addr(), t.ti_host2.get_ip_addr(), t.ti_host2.get_ovs_port(), datapath)
         # PERMIT tcp input from gateway and elk to heralding
         self.permit_tcp_host1_host2(parser, t.gw1.get_ip_addr(), t.ti_host1.get_ip_addr(), t.ti_host1.get_ovs_port(), datapath)
+        self.permit_tcp_host1_host2(parser, t.gw3.get_ip_addr(), t.ti_host1.get_ip_addr(), t.ti_host1.get_ovs_port(), datapath)
+        self.permit_tcp_host1_host2(parser, t.gw2.get_ip_addr(), t.ti_host1.get_ip_addr(), t.ti_host1.get_ovs_port(), datapath)
         self.permit_tcp_host1_host2(parser, t.elk_if1.get_ip_addr(), t.ti_host1.get_ip_addr(), t.ti_host1.get_ovs_port(), datapath)
         self.permit_tcp_host1_host2(parser, t.gw1.get_ip_addr(), t.ti_host2.get_ip_addr(), t.ti_host2.get_ovs_port(), datapath)
         self.permit_tcp_host1_host2(parser, t.elk_if1.get_ip_addr(), t.ti_host2.get_ip_addr(), t.ti_host2.get_ovs_port(), datapath)
@@ -382,7 +387,7 @@ class ExampleSwitch13(app_manager.RyuApp):
         self.permit_tcp_dstIP_dstPORT(parser, t.ti_host2.get_ip_addr(), t.ti_host2.get_ovs_port(), 3022, datapath)  
 
         # DROP arp input to ti_host1
-        self.drop_tcp_dstIP(parser, t.ti_host1.get_ip_addr(), datapath)
+        #self.drop_tcp_dstIP(parser, t.ti_host1.get_ip_addr(), datapath)
         self.permit_tcp_host1_host2(parser, t.gw1.get_ip_addr(), t.ti_host1.get_ip_addr(), t.ti_host1.get_ovs_port(), datapath)
         self.permit_tcp_host1_host2(parser, t.elk_if1.get_ip_addr(), t.ti_host1.get_ip_addr(), t.ti_host1.get_ovs_port(), datapath)
 

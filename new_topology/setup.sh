@@ -5,8 +5,10 @@ echo "Restoring Network ..."
 
 vlans1=("vlan11" "vlan12" "vlan13" "vlan16" "vlan17" "vlan18")
 vlans2=("vlan21" "vlan22" "vlan23" "vlan26" "vlan27")
+vlans2=("vlan31" "vlan32" "vlan33" "vlan36" "vlan37")
 taps1=("tap1" "tap2" "tap3" "tap4" "tap7" "tap5" "tap6" "tap10" "tap12" "tap13" "tap11" "tap18" )
 taps2=("tap21" "tap22" "tap23" "tap26")
+taps3=("tap31" "tap32" "tap33" "tap36")
 
 #TAP create_tap(tap_name, bridge_name, tag, ofport)
 create_tap "tap1" "br0_lan1" "1" "2"
@@ -29,6 +31,13 @@ create_tap "tap22" "br0_lan2" "21" "32"
 create_tap "tap23" "br0_lan2" "22" "33"
 create_tap "tap26" "br1_lan2" "26" "36"
 
+#LAN3
+create_tap "tap31" "br0_lan3" "31" "41"
+create_tap "tap32" "br0_lan3" "31" "42"
+create_tap "tap33" "br0_lan3" "32" "43"
+create_tap "tap36" "br1_lan3" "36" "46"
+
+
 # VLAN setup_vlan_interface(vlan_name, ip_address, mac_address)
 setup_vlan_interface "vlan11" "10.1.3.1/24" "9e:c3:c6:49:0e:e8"
 setup_vlan_interface "vlan12" "10.1.4.1/24" "16:67:1f:3f:86:a7"
@@ -49,4 +58,14 @@ setup_vlan_interface "vlan27" "10.2.11.1/24" "ea:6a:20:a0:26:11"
 
 create_masquerade_rules "${taps2[@]}" "${vlans2[@]}"
 create_vlan_forward_rules "${vlans2[@]}"
+
+#LAN 3
+setup_vlan_interface "vlan31" "10.3.3.1/24" "8a:ae:02:40:3f:96"
+setup_vlan_interface "vlan32" "10.3.4.1/24" "ea:6a:20:a0:36:15"
+setup_vlan_interface "vlan33" "10.3.5.1/24" "ea:6a:20:a0:36:17"
+setup_vlan_interface "vlan36" "10.3.10.1/24" "ea:6a:20:a0:3f:93"
+setup_vlan_interface "vlan37" "10.3.11.1/24" "ea:6a:20:a0:36:11"
+
+create_masquerade_rules "${taps3[@]}" "${vlans3[@]}"
+create_vlan_forward_rules "${vlans3[@]}"
 

@@ -45,9 +45,9 @@ def setup_docker_container(docker_directory):
     os.chdir(docker_directory)
      # Chiamata allo script setup_container.sh
     script1_path = os.path.join(docker_directory, 'setup_container.sh')
-    script2_path = os.path.join(docker_directory, 'auth.sh')
+    #script2_path = os.path.join(docker_directory, 'auth.sh')
     run_shell_script(script1_path)
-    run_shell_script(script2_path)
+    #run_shell_script(script2_path)
 
 
 def start_vagrant(vagrant_directory):
@@ -108,19 +108,19 @@ def main():
 
     start_docker_compose(docker_compose_lan1_directory)
     time.sleep(2)
-    start_docker_compose(docker_compose_lan2_directory)
-    time.sleep(7)
+    #start_docker_compose(docker_compose_lan2_directory)
+    #time.sleep(7)
 
     setup_docker_container(docker_lan1_directory)
-    time.sleep(4)
-    setup_docker_container(docker_lan2_directory)
+    #time.sleep(4)
+    #setup_docker_container(docker_lan2_directory)
 
     time.sleep(5)
 
     run_script_in_a_different_windows(start_controller_lan1_path)
     run_script_in_a_different_windows(start_int_host_lan1_path)
-    run_script_in_a_different_windows(start_controller_lan2_path)
-    run_script_in_a_different_windows(start_int_host_lan2_path)
+    #run_script_in_a_different_windows(start_controller_lan2_path)
+    #run_script_in_a_different_windows(start_int_host_lan2_path)
     
     time.sleep(2)
     start_vagrant(vagrant_lan1_directory)

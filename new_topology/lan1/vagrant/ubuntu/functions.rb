@@ -104,11 +104,7 @@ def deploy_honeyfarm_runtime(config, name, box, memory_size, host_path, port_vm,
     
       vm.vm.provision "shell", path: "./configurations/#{host_path}.sh"
       vm.vm.provision "shell", path: "./#{host_path}/start.sh"
-      vm.vm.provision "shell", inline: <<-SHELL
-    cd /home/claudio/ubuntu/#{host_path}
-
-    nohup python3 app.py &
-  SHELL
+      
       
     end
     end
