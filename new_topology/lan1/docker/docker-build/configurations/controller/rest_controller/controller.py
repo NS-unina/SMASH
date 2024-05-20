@@ -154,10 +154,12 @@ class ExampleSwitch13(app_manager.RyuApp):
                     source = t.dmz_service
                     gw = t.gw10
                     for tcp_port in tcp_ports:
+                        t.host_redirected.append(src_ip)
                         spawn(self.redirect_traffic_dmz,self,src_ip,tcp_port,source,gw,subnet,br_dpid)                  
                         print("REGOLA REDIRECTION INSERITA DIRETTAMENTE DAL CONTROLLER DMZ")   
                 else:
                     for tcp_port in tcp_ports:
+                        t.host_redirected.append(src_ip)
                         spawn(self.redirect_traffic,self,src_ip,tcp_port,source,gw,subnet,br_dpid)
                         #self.redirect_traffic(self,src_ip,tcp_port,source,gw,subnet,br_dpid)                 
                         print("REGOLA REDIRECTION INSERITA DIRETTAMENTE DAL CONTROLLER")
@@ -663,7 +665,6 @@ class ExampleSwitch13(app_manager.RyuApp):
         man_dmz.sb[decoy_index][port_index] = 1 
         
         print("Redirection dell'utente: ",src_ip, "del service:", source.get_ip_addr(), "All'honeypot: ", decoy.get_ip_addr(), "da porta: ", tcp_port, "to: ", destination_port)
-        t.host_redirected.append(src_ip)
         self.redirect_to(br_dpid,src_ip,tcp_port,source,decoy,gw,destination_port)
         self.change_decoy_src(br_dpid, src_ip,subnet,decoy,tcp_port,gw,source,destination_port)
     
