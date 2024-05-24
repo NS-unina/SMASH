@@ -39,6 +39,3 @@ sudo docker-compose up -d $container_name
 sleep 1
 
 
-
-
-

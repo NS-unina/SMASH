@@ -132,7 +132,6 @@ class RestController(ExampleSwitch13):
         datapath = self.switches.get(dpid)
         
         parser = datapath.ofproto_parser
-        #print(subnet.get_subnet_name())
         out_port = u.host_to_port(subnet, src_ip)
         
         actions = [parser.OFPActionSetField(ipv4_src=destination.get_ip_addr()),
@@ -268,11 +267,6 @@ class SimpleSwitchController(ControllerBase):
             #simple_switch.redirect_socks5_syn(dpid, src_IP)
             simple_switch.change_decoy_src(dpid, src_IP,subnet,decoy,tcp_port,gw,source,destination_port)
             print("Redirection dell'utente: ",src_IP, "del service:", source.get_ip_addr(), "All'honeypot: ", decoy.get_ip_addr(), "da porta: ", tcp_port, "to: ", destination_port)
-            #simple_switch.change_heralding_src_socks5(dpid, src_IP)
-     
-            #simple_switch.change_http_port(dpid, src_IP)
-            #simple_switch.drop_pop3_rst(dpid, src_IP)
-            #simple_switch.send_to_controller(dpid, src_IP)
             return Response(status=200)
         else:
             return Response(status=400)        

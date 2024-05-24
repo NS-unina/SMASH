@@ -16,3 +16,7 @@ WARNING: This is a development server. Do not use it in a production deployment.
  * Running on http://127.0.0.1:8080
  * Running on http://10.0.2.15:8080
 Press CTRL+C to quit
+ * Serving Flask app 'app'
+ * Debug mode: off
+Address already in use
+Port 8080 is in use by another program. Either identify and stop that program, or start the server with a different port.
