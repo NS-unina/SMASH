@@ -1,0 +1,122 @@
+version: "3"
+
+services:
+
+    evaluation6:
+        build: ./images/heralding_imm
+        container_name: evaluation6
+        cap_add:
+        - NET_ADMIN 
+        tty: true
+        stdin_open: true
+        privileged: true
+        volumes:
+        - ./configurations/heralding:/home
+        networks:
+          my_network:
+            ipv4_address: 172.28.0.25
+        ports:
+          - "6015:22"  
+          - "6016:21" 
+          - "6017:1080"
+
+    evaluation5:
+        build: ./images/heralding_imm
+        container_name: evaluation5
+        cap_add:
+        - NET_ADMIN 
+        tty: true
+        stdin_open: true
+        privileged: true
+        volumes:
+        - ./configurations/heralding:/home
+        networks:
+          my_network:
+            ipv4_address: 172.28.0.24
+        ports:
+          - "6012:22"  
+          - "6013:21" 
+          - "6014:1080"
+
+    evaluation4:
+        build: ./images/heralding_imm
+        container_name: evaluation4
+        cap_add:
+        - NET_ADMIN 
+        tty: true
+        stdin_open: true
+        privileged: true
+        volumes:
+        - ./configurations/heralding:/home
+        networks:
+          my_network:
+            ipv4_address: 172.28.0.23
+        ports:
+          - "6009:22"  
+          - "6010:21" 
+          - "6011:1080"
+
+    evaluation3:
+        build: ./images/heralding_imm
+        container_name: evaluation3
+        cap_add:
+        - NET_ADMIN 
+        tty: true
+        stdin_open: true
+        privileged: true
+        volumes:
+        - ./configurations/heralding:/home
+        networks:
+          my_network:
+            ipv4_address: 172.28.0.22
+        ports:
+          - "6006:22"  
+          - "6007:21" 
+          - "6008:1080"
+
+    evaluation2:
+        build: ./images/heralding_imm
+        container_name: evaluation2
+        cap_add:
+        - NET_ADMIN 
+        tty: true
+        stdin_open: true
+        privileged: true
+        volumes:
+        - ./configurations/heralding:/home
+        networks:
+          my_network:
+            ipv4_address: 172.28.0.21
+        ports:
+          - "6003:22"  
+          - "6004:21" 
+          - "6005:1080"
+
+    evaluation1:
+        build: ./images/heralding_imm
+        container_name: evaluation1
+        cap_add:
+        - NET_ADMIN 
+        tty: true
+        stdin_open: true
+        privileged: true
+        volumes:
+        - ./configurations/heralding:/home
+        networks:
+          my_network:
+            ipv4_address: 172.28.0.20
+        ports:
+          - "6000:22"  
+          - "6001:21" 
+          - "6002:1080"
+
+    
+          
+
+networks:
+  my_network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16
+

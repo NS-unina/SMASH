@@ -12,7 +12,7 @@ current_directory = os.getcwd()
 
 # Costruisci il percorso del file basato sulla directory corrente
 file_name = "docker-compose.yaml"
-file_path = os.path.join(current_directory, 'docker', 'docker-build',file_name)
+file_path = os.path.join(current_directory, 'docker', 'docker-build-capacity-test',file_name)
 
 # Leggi il contenuto iniziale del file YAML
 with open(file_path, 'r') as f:
@@ -30,6 +30,7 @@ def signal_handler(sig, frame):
     sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
 
 
 class Container:

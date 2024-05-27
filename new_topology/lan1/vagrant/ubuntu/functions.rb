@@ -79,7 +79,7 @@ def deploy_honeyfarm(config, name, box, memory_size, host_path, port_vm, port_ho
       vm.vm.provision "shell", path: "./configurations/#{name}.sh"
       vm.vm.provision "shell", path: "./#{host_path}/start.sh"
       vm.vm.provision "shell", inline: <<-SHELL
-    cd /home/claudio/ubuntu/#{name}/docker/docker-build
+    cd /home/claudio/ubuntu/#{name}/docker/docker-build-capacity-test
 
     docker-compose up -d
   SHELL

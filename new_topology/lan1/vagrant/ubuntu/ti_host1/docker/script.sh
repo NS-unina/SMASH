@@ -1,5 +1,5 @@
 #!/bin/bash
-docker_compose_file="/home/claudio/ubuntu/ti_host1/docker/docker-build/docker-compose.yaml"
+docker_compose_file="/home/claudio/ubuntu/ti_host1/docker/docker-build-capacity-test/docker-compose.yaml"
 
 name=$1
 internal_ip=$2
@@ -34,7 +34,7 @@ config="
 sed -i "/services:/r /dev/stdin" "${docker_compose_file}" <<< "${config}"
 
 sleep 1
-cd /home/claudio/ubuntu/ti_host1/docker/docker-build
+cd /home/claudio/ubuntu/ti_host1/docker/docker-build-capacity-test
 sudo docker-compose up -d $container_name
 sleep 1
 
