@@ -30,6 +30,7 @@ def signal_handler(sig, frame):
     sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
 
 
 occupied_port = [3200,3201,3202,3203,3204,3205,3206,3207,3208,3209,3210,3211,3212,3213]

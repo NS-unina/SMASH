@@ -22,23 +22,53 @@ if ! [[ $repetitions =~ ^[0-9]+$ ]]; then
     exit 1
 fi
 
-(cd "$TOPO_DIR" && ./reset.sh && ./create_net.sh && ./setup.sh)
 
-sleep 5
-gnome-terminal -- bash -c "cd \"$FLASK_DIR\" && python3 \"$FLASK_SERVER\""
 
-sleep 5
 
 # Loop per 10 ripetizioni
-for ((i=1; i<=$repetitions; i++))
+for ((i=8; i<$((8+repetitions)); i++))
 do
-    echo "Ripetizione $i"
+    (cd "$TOPO_DIR" && ./reset.sh && ./create_net.sh && ./setup.sh)
+        # Trova il PID del server Flask in esecuzione
+    FLASK_PID=$(pgrep -f "python3 $FLASK_SERVER")
 
-    # Naviga nella directory di Vagrant ed esegui il comando
+        # Naviga nella directory di Vagrant ed esegui il comando
     (cd "$VAGRANT_DIR" && vagrant destroy -f)
     if [ $? -ne 0 ]; then
         echo "Errore durante l'esecuzione di 'vagrant destroy -f' alla ripetizione $i"
         exit 1
+    fi
+
+    if [ -n "$FLASK_PID" ]; then
+        echo "Trovato server Flask in esecuzione con PID: $FLASK_PID"
+        echo "Terminazione del server Flask..."
+        kill "$FLASK_PID"
+
+        # Aspetta che il processo venga terminato
+        while kill -0 "$FLASK_PID" 2>/dev/null; do
+            sleep 1
+        done
+
+        echo "Server Flask terminato."
+    else
+        echo "Nessun server Flask in esecuzione trovato."
+    fi
+
+    # Riavvia il server Flask in una nuova shell
+    echo "Riavvio del server Flask..."
+    gnome-terminal -- bash -c "cd \"$FLASK_DIR\" && python3 \"$FLASK_SERVER\""
+    echo "Server Flask riavviato."
+
+
+
+    echo $((5+repetitions))
+    echo "Ripetizione $i"
+
+
+
+    
+    if [ "$i" -ne 8 ]; then
+    sleep 180
     fi
 
     # Naviga nella directory dello script Python ed eseguilo
@@ -49,6 +79,7 @@ do
     fi
 
     echo "Ripetizione $i completata"
+    
 done
 
 echo "Tutte le ripetizioni sono state completate"

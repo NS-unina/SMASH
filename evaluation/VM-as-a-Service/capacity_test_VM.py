@@ -36,7 +36,13 @@ def make_post_request(url, data):
 
 def main(reps):
     # Configurazione del logging
-    logging.basicConfig(filename=f'monitoring_{reps}.log', level=logging.INFO, 
+    directory_log = "log_2048"
+    if not os.path.exists(directory_log):
+        os.makedirs(directory_log)
+
+    log_path = os.path.join(directory_log, f'monitoring_{reps}.log')
+    
+    logging.basicConfig(filename=log_path, level=logging.INFO, 
                         format='%(asctime)s - %(levelname)s - %(message)s')
 
     # URL della richiesta POST
@@ -46,7 +52,7 @@ def main(reps):
     interval = 20
 
     # Soglia di utilizzo della RAM per interrompere lo script
-    ram_threshold = 30
+    ram_threshold = 90
 
     # Inizializzazione dei contatori per il parametro name, IP e MAC
     name_counter = 1
@@ -58,9 +64,9 @@ def main(reps):
 
     # Apertura dei file per salvare i dati
     # Nome della cartella dove salvare i file
-    directory_response_time = "response_time"
-    directory_cpu_usage = "cpu_usage"
-    directory_ram_usage = "ram_usage"
+    directory_response_time = "response_time_2048"
+    directory_cpu_usage = "cpu_usage_2048"
+    directory_ram_usage = "ram_usage_2048"
     
     # Crea la cartella se non esiste
     if not os.path.exists(directory_response_time):

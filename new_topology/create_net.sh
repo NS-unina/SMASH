@@ -70,13 +70,6 @@ echo "Connect br1_lan3 to controller 10.3.11.100:6633"
 sudo ovs-vsctl set-controller br1_lan3 tcp:10.3.11.100:6633
 
 
-
-#LAN4 Management LAN
-create_vlan "vlan41" "br_lan4" "40" "10.4.3.1/24" "8a:ae:02:40:8f:96" "60"
-
-echo "Connect br_lan4 to controller 10.4.3.100:6633"
-sudo ovs-vsctl set-controller br_lan4 tcp:10.4.3.100:6633
-
 create_vlan_forward_rules "${vlans1[@]}"
 create_vlan_forward_rules "${vlans2[@]}"
 create_vlan_forward_rules "${vlans3[@]}"
