@@ -26,7 +26,7 @@ fi
 
 
 # Loop per 10 ripetizioni
-for ((i=8; i<$((8+repetitions)); i++))
+for ((i=1; i<$((1+repetitions)); i++))
 do
     (cd "$TOPO_DIR" && ./reset.sh && ./create_net.sh && ./setup.sh)
         # Trova il PID del server Flask in esecuzione
@@ -67,7 +67,7 @@ do
 
 
     
-    if [ "$i" -ne 8 ]; then
+    if [ "$i" -ne 1 ]; then
     sleep 180
     fi
 
