@@ -83,6 +83,19 @@ sudo ovs-vsctl -- add-port br0_lan2 patch2 -- set interface patch2 type=patch of
 sudo ovs-vsctl -- add-port br0_lan3 patch4 -- set interface patch4 type=patch ofport=87 options:peer=patch5 \
 -- add-port br1_lan3 patch5 -- set interface patch5 type=patch ofport=88 options:peer=patch4
 
+#PATCH WAN
+
+sudo ovs-vsctl -- add-port br1_lan1 patch10 -- set interface patch10 type=patch ofport=95 options:peer=patch11 \
+-- add-port br_wan patch11 -- set interface patch11 type=patch ofport=96 options:peer=patch10
+
+sudo ovs-vsctl -- add-port br1_lan2 patch12 -- set interface patch12 type=patch ofport=97 options:peer=patch13 \
+-- add-port br_wan patch13 -- set interface patch13 type=patch ofport=98 options:peer=patch12
+
+sudo ovs-vsctl -- add-port br1_lan3 patch14 -- set interface patch14 type=patch ofport=99 options:peer=patch15 \
+-- add-port br_wan patch15 -- set interface patch15 type=patch ofport=100 options:peer=patch14
+
+
+
 sudo iptables -t nat -A POSTROUTING -o patch0 -j MASQUERADE
 sudo iptables -t nat -A POSTROUTING -o patch1 -j MASQUERADE
 sudo iptables -t nat -A POSTROUTING -o patch2 -j MASQUERADE
