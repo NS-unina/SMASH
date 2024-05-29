@@ -1,9 +1,9 @@
 version: "3"
 
 services:
-    int_host_ev: 
+    int_host: 
         build: ./images/host_imm
-        container_name: int_host_ev
+        container_name: int_host
         cap_add:
           - NET_ADMIN 
         tty: true
@@ -11,9 +11,9 @@ services:
         privileged: true
         volumes:
           - ./configurations/int_host:/home
-    dmz_host_ev:
+    dmz_host:
         build: ./images/host_imm
-        container_name: ext_host_ev
+        container_name: ext_host
         cap_add:
           - NET_ADMIN 
         tty: true
@@ -21,9 +21,9 @@ services:
         privileged: true
         volumes:
           - ./configurations/ext_host:/home       
-    dmz_service_ev:
+    dmz_service:
         build: ./images/ssh_imm
-        container_name: ssh_server_ev
+        container_name: ssh_server
         cap_add:
           - NET_ADMIN 
         tty: true
@@ -43,9 +43,9 @@ services:
         deploy:
           mode: replicated
           replicas: 30
-    controller_ev:
+    controller:
         build: ./images/ryu_imm
-        container_name: controller_ev
+        container_name: controller
         cap_add:
           - NET_ADMIN 
         tty: true

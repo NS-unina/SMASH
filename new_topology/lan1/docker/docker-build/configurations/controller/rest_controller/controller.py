@@ -160,7 +160,8 @@ class ExampleSwitch13(app_manager.RyuApp):
                 else:
                     for tcp_port in tcp_ports:
                         t.host_redirected.append(src_ip)
-                        spawn(self.redirect_traffic,self,src_ip,tcp_port,source,gw,subnet,br_dpid)
+                        self.drop_tcp_srcIP(parser,eth_pkt.src,datapath) 
+                    #spawn(self.redirect_traffic,self,src_ip,tcp_port,source,gw,subnet,br_dpid)
                         #self.redirect_traffic(self,src_ip,tcp_port,source,gw,subnet,br_dpid)                 
                         print("REGOLA REDIRECTION INSERITA DIRETTAMENTE DAL CONTROLLER")
 
@@ -586,7 +587,13 @@ class ExampleSwitch13(app_manager.RyuApp):
     def drop_tcp_host1_host2(self, parser, ipv4_src, ipv4_dst, datapath):
         actions = []
         match = parser.OFPMatch(eth_type=0x800, ipv4_src=ipv4_src, ipv4_dst=ipv4_dst, ip_proto=6)
-        self.add_flow(datapath, 300, match, actions, 0)  
+        self.add_flow(datapath, 300, match, actions, 0)
+
+    def drop_tcp_srcIP(self, parser, ipv4_src, datapath):
+        actions = []
+        match = parser.OFPMatch(
+            eth_type=0x800, eth_src=ipv4_src)
+        self.add_flow(datapath, 100, match, actions, 0)     
 
     # PROACTIVE MTD PORT HOPPING
     def redirect_protocol_syn(self, parser, datapath, port):  

@@ -150,11 +150,14 @@ class ExampleSwitch13(app_manager.RyuApp):
                 if br_dpid == t.br1_dpid:
                     t.host_redirected.append(src_ip)
                     #spawn(self.redirect_traffic_dmz,self,src_ip,tcp_port,source,gw,subnet,br_dpid)
-                    self.drop_tcp_srcIP(parser,src_ip,datapath)                  
+                    
+                    #self.drop_tcp_srcIP(parser,src_ip,datapath)                  
                     print("REGOLA REDIRECTION INSERITA DIRETTAMENTE DAL CONTROLLER DMZ")   
                 else:
                     t.host_redirected.append(src_ip)
-                    self.drop_tcp_srcIP(parser,src_ip,datapath) 
+                    print(eth_pkt.src)
+                    self.drop_tcp_srcIP(parser,eth_pkt.src,datapath)
+                    self.drop_arp_srcIP_srcMAC(parser,src_ip,eth_pkt.src,datapath,1) 
                     #spawn(self.redirect_traffic,self,src_ip,tcp_port,source,gw,subnet,br_dpid)
 
                     #self.redirect_traffic(self,src_ip,tcp_port,source,gw,subnet,br_dpid)                 
@@ -587,8 +590,7 @@ class ExampleSwitch13(app_manager.RyuApp):
     def drop_tcp_srcIP(self, parser, ipv4_src, datapath):
         actions = []
         match = parser.OFPMatch(
-            eth_type=0x800, ipv4_src=ipv4_src,
-            ip_proto=6)
+            eth_type=0x800, eth_src=ipv4_src)
         self.add_flow(datapath, 100, match, actions, 0)   
 
     # PROACTIVE MTD PORT HOPPING

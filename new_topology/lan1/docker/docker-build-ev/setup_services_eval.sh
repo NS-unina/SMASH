@@ -173,11 +173,11 @@ for i in ${!IP_array[@]}; do
   echo $var
   if sudo ovs-vsctl --data=bare --no-heading --columns=name find interface external_ids:container_id=docker-build-ev-int_ssh_server-$var \
       external_ids:container_iface=eth1 | grep -q "${!PORT_NAME_array[$i]}_l"; then
-      sudo ./my-ovs-docker del-port br_lan1 eth1 docker-build-ev-int_ssh_server-$var
+      sudo ./my-ovs-docker del-port br0_lan1 eth1 docker-build-ev-int_ssh_server-$var
   fi
   sudo docker stop docker-build-ev-int_ssh_server-$var
   sudo docker start docker-build-ev-int_ssh_server-$var
-  sudo ./my-ovs-docker add-port br_lan1 eth1 docker-build-ev-int_ssh_server-$var ${PORT_NAME_array[$i]} ${PORT_array[$i]} \
+  sudo ./my-ovs-docker add-port br0_lan1 eth1 docker-build-ev-int_ssh_server-$var ${PORT_NAME_array[$i]} ${PORT_array[$i]} \
     --ipaddress=${IP_array[$i]} --macaddress=${MAC_array[$i]}
   sudo ovs-vsctl -- set port ${PORT_NAME_array[$i]}_l tag=1
   sudo iptables -t nat -A POSTROUTING -o ${PORT_NAME_array[$i]}_l -j MASQUERADE
