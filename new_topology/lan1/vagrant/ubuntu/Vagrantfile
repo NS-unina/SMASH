@@ -31,6 +31,11 @@ Vagrant.configure("2") do |config|
     
     #deploy_honeyfarm(config, "ti_host_dmz", "ubuntu/focal64", "1024","ti_host_dmz", 22, 3218,"ssh", "tap18", "080027b70e28", "10.1.12.10", ["10.1.3.0/24", "10.1.5.0/24", "10.1.10.0/24", "10.1.11.0/24","10.1.4.0/24"],"10.1.12.1")
   # HONEYPOT FARM
+    deploy_honeyfarm_runtime(config, "evaluation5", "ubuntu/focal64", "4096","ext_cowrie", 22, 3351,"ssh", "tap_8fcee3b8-12", "0800276dedde", "10.1.4.54", ["10.1.3.0/24", "10.1.5.0/24", "10.1.10.0/24", "10.1.11.0/24"],"10.1.4.1")
+    deploy_honeyfarm_runtime(config, "evaluation4", "ubuntu/focal64", "4096","ext_cowrie", 22, 3406,"ssh", "tap_d0147bb7-84", "0800276deddd", "10.1.4.53", ["10.1.3.0/24", "10.1.5.0/24", "10.1.10.0/24", "10.1.11.0/24"],"10.1.4.1")
+    deploy_honeyfarm_runtime(config, "evaluation3", "ubuntu/focal64", "4096","ext_cowrie", 22, 3916,"ssh", "tap_2ca43b5d-47", "0800276deddc", "10.1.4.52", ["10.1.3.0/24", "10.1.5.0/24", "10.1.10.0/24", "10.1.11.0/24"],"10.1.4.1")
+    deploy_honeyfarm_runtime(config, "evaluation2", "ubuntu/focal64", "4096","ext_cowrie", 22, 3217,"ssh", "tap_eaefd8e2-c4", "0800276deddb", "10.1.4.51", ["10.1.3.0/24", "10.1.5.0/24", "10.1.10.0/24", "10.1.11.0/24"],"10.1.4.1")
+    deploy_honeyfarm_runtime(config, "evaluation1", "ubuntu/focal64", "4096","ext_cowrie", 22, 3556,"ssh", "tap_7439ea4e-97", "0800276dedda", "10.1.4.50", ["10.1.3.0/24", "10.1.5.0/24", "10.1.10.0/24", "10.1.11.0/24"],"10.1.4.1")
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.

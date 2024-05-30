@@ -7,7 +7,7 @@ repetition_number=$1
 
 # Intervallo di IP (ad esempio, da 1 a 30 per la tua subnet)
 start_ip=11
-end_ip=50
+end_ip=22
 
 # Porta range
 ports="1-100"
@@ -16,7 +16,7 @@ ports="1-100"
 timing="-T4"
 
 # Altre opzioni per velocizzare la scansione
-options="-Pn --max-retries 1 --host-timeout 10s --min-rate 1000"
+options="-Pn --max-retries 2 "
 
 # Contatori per i risultati
 hosts_up=0
@@ -24,7 +24,7 @@ hosts_down=0
 
 # Directory per salvare i risultati
 output_dir="nmap_results"
-output_dir2="report"
+output_dir2="12_honeypot_10_server"
 mkdir -p "$output_dir"
 mkdir -p "$output_dir2"
 
@@ -34,6 +34,16 @@ ips=()
 for i in $(seq $start_ip $end_ip); do
     ips+=("${subnet}${i}")
 done
+ips+=("${subnet}5")
+ips+=("${subnet}6")
+ips+=("${subnet}7")
+ips+=("${subnet}8")
+ips+=("${subnet}3")
+ips+=("${subnet}4")
+ips+=("${subnet}67")
+ips+=("${subnet}68")
+ips+=("${subnet}1")
+echo $ips
 
 # Randomizza l'ordine degli IP
 shuffled_ips=($(shuf -e "${ips[@]}"]))
@@ -43,7 +53,7 @@ for ip in "${shuffled_ips[@]}"; do
     echo "Scanning $ip"
     
     # File di output per questo IP
-    output_file="${output_dir}/1.txt"
+    output_file="${output_dir2}/${repetition_number}.txt"
     output_report="${output_dir2}/report_${repetition_number}.txt"
     
     # Esegui la scansione Nmap e salva l'output nel file
@@ -62,4 +72,4 @@ done
 # Stampa i risultati finali
 echo "Scan complete." >> "$output_report"
 echo "Hosts up: $hosts_up" >> "$output_report"
-echo "Hosts down: $hosts_down" >> "$output_report"
+#echo "Hosts down: $hosts_down" >> "$output_report"

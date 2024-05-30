@@ -44,7 +44,7 @@ create_tap "$tap_name" "$bridge" "$tag" "$ofport"
 
 tap_ofport=$(sudo ovs-vsctl get Interface "$tap_name" ofport)
 
-config_string="    deploy_honeyfarm_runtime(config, \"$vm_name\", \"ubuntu/focal64\", \"1024\",\"ext_cowrie\", 22, $free_port,\"ssh\", \"$tap_name\", \"$mac_tap\", \"$ip_address\", $routes,\"$gateway\")"
+config_string="    deploy_honeyfarm_runtime(config, \"$vm_name\", \"ubuntu/focal64\", \"4096\",\"ext_cowrie\", 22, $free_port,\"ssh\", \"$tap_name\", \"$mac_tap\", \"$ip_address\", $routes,\"$gateway\")"
 
 sed -i "/# HONEYPOT FARM/a\\
 ${config_string}" "${vagrant_file}"

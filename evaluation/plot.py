@@ -18,6 +18,10 @@ def main(file_path, prefix):
     plt.figure(figsize=(10, 6))
     plt.plot(df[x_label], df[y_label], marker='o', linestyle='-', color='b', label=y_label)
 
+    # Impostazione dei limiti degli assi per allargare la scala
+    #plt.xlim(1, 7)  # Allarga la scala dell'asse x
+    #plt.ylim(50, 200)  # Allarga la scala dell'asse y
+
     # Aggiunge titolo e etichette
     plt.title(f'{y_label} per {x_label}')
     plt.xlabel(x_label)

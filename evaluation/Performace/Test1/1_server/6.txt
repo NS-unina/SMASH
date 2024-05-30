@@ -1,0 +1,4 @@
+# Nmap 7.94SVN scan initiated Thu May 30 15:00:03 2024 as: nmap -T4 -Pn --max-retries 2 -p 1-100 -oN 1_server/6.txt 10.1.3.14]
+Failed to resolve "10.1.3.14]".
+WARNING: No targets were specified, so 0 hosts scanned.
+# Nmap done at Thu May 30 15:00:03 2024 -- 0 IP addresses (0 hosts up) scanned in 0.01 seconds

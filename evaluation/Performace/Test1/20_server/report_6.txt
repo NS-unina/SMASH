@@ -1,0 +1,3 @@
+Scan complete.
+Hosts up: 9
+Hosts down: 14

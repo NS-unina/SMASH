@@ -1,0 +1,4 @@
+# Nmap 7.94SVN scan initiated Thu May 30 16:01:51 2024 as: nmap -T4 -Pn --max-retries 2 -p 1-100 -oN 12_honeypot_10_server/9.txt 10.1.3.1]
+Failed to resolve "10.1.3.1]".
+WARNING: No targets were specified, so 0 hosts scanned.
+# Nmap done at Thu May 30 16:01:51 2024 -- 0 IP addresses (0 hosts up) scanned in 0.02 seconds
