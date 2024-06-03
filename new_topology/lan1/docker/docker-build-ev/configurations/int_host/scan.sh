@@ -7,7 +7,7 @@ repetition_number=$1
 
 # Intervallo di IP (ad esempio, da 1 a 30 per la tua subnet)
 start_ip=11
-end_ip=22
+end_ip=52
 
 # Porta range
 ports="1-100"
@@ -24,7 +24,7 @@ hosts_down=0
 
 # Directory per salvare i risultati
 output_dir="nmap_results"
-output_dir2="12_honeypot_10_server"
+output_dir2="40_server"
 mkdir -p "$output_dir"
 mkdir -p "$output_dir2"
 
@@ -34,14 +34,6 @@ ips=()
 for i in $(seq $start_ip $end_ip); do
     ips+=("${subnet}${i}")
 done
-ips+=("${subnet}5")
-ips+=("${subnet}6")
-ips+=("${subnet}7")
-ips+=("${subnet}8")
-ips+=("${subnet}3")
-ips+=("${subnet}4")
-ips+=("${subnet}67")
-ips+=("${subnet}68")
 ips+=("${subnet}1")
 echo $ips
 

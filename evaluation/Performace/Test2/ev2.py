@@ -25,31 +25,37 @@ avg_hp_8 = 0
 avg_hp_10 = 0
 avg_hp_12 = 0
 
-hp_first_2 = [8, 5, 0, 3, 2, 0]
+hp_first_2 = [1, 3, 8, 2, 2, 7, 10, 1, 1, 5]
 
-hp_first_4 = [2, 0, 4, 3, 4, 3]
+hp_first_4 = [0, 1, 1, 2, 0, 3, 3, 4, 1, 0]
 
-hp_first_8 = [0, 5, 0, 3, 1, 0]
+hp_first_8 = [2, 0, 5, 2, 0, 4, 0, 1, 2, 0]
 
-hp_first_10 = [1, 0, 0, 2, 2, 0]
+hp_first_10 = [0, 1, 0, 1, 0, 2, 0, 1, 0, 0]
 
-hp_first_12 = [4, 0, 0, 1, 0, 0]
+hp_first_12 = [0, 1, 0, 0, 0, 1, 2, 0, 1, 1]
 
 honeypots = [hp_first_2, hp_first_4, hp_first_8, hp_first_10, hp_first_12]
 
 avg_service_1 = s.mean([hp_first_2[0], hp_first_2[1], hp_first_2[2], hp_first_2[3],
-                        hp_first_2[4], hp_first_2[5]])
+                        hp_first_2[4], hp_first_2[5],hp_first_2[6], hp_first_2[7],
+                        hp_first_2[8], hp_first_2[9]])
 avg_service_10 = s.mean([hp_first_4[0], hp_first_4[1], hp_first_4[2], hp_first_4[3],
-                         hp_first_4[4], hp_first_4[5]])
+                         hp_first_4[4], hp_first_4[5], hp_first_4[6], hp_first_4[7],
+                        hp_first_4[8], hp_first_4[9]])
 avg_service_20 = s.mean([hp_first_8[0], hp_first_8[1], hp_first_8[2], hp_first_8[3],
-                         hp_first_8[4], hp_first_8[5]])
+                         hp_first_8[4], hp_first_8[5], hp_first_8[6], hp_first_8[7],
+                        hp_first_8[8], hp_first_8[9]])
 avg_service_30 = s.mean([hp_first_10[0], hp_first_10[1], hp_first_10[2], hp_first_10[3],
-                         hp_first_10[4], hp_first_10[5]])
+                         hp_first_10[4], hp_first_10[5], hp_first_10[6], hp_first_10[7],
+                        hp_first_10[8], hp_first_10[9]])
 avg_service_40 = s.mean([hp_first_12[0], hp_first_12[1], hp_first_12[2], hp_first_12[3],
-                         hp_first_12[4], hp_first_12[5]])
+                         hp_first_12[4], hp_first_12[5], hp_first_12[6], hp_first_12[7],
+                        hp_first_12[8], hp_first_12[9]])
 
 hp_MTD = [10, avg_service_1, avg_service_10, avg_service_20, avg_service_30, avg_service_40]
 
+print(avg_service_10)
 # calcolo varianza
 # varianze = []
 # for j in range(0, len(honeypots)):

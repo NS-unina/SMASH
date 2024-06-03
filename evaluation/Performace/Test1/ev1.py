@@ -26,15 +26,15 @@ avg_service_20 = 0
 avg_service_30 = 0
 avg_service_40 = 0
 
-service_first_1 = [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
+service_first_1 = [1, 0, 0, 1, 0, 1, 0, 0, 1, 0]
 
-service_first_10 = [5, 2, 7, 2, 6, 8, 0, 0, 0, 0, 0, 0]
+service_first_10 = [2, 3, 7, 0, 1, 6, 3, 0, 7, 3]
 
-service_first_20 = [15, 8, 8, 1, 8, 2, 4, 2, 7, 8, 18, 2]
+service_first_20 = [4, 0, 15, 12, 0, 9, 12, 3, 1, 7]
 
-service_first_30 = [5, 6, 0, 5, 11, 8, 20, 13, 8, 15, 3, 12]
+service_first_30 = [0, 4, 9, 18, 2, 6, 13, 4, 1, 10]
 
-service_first_40 = [23, 12, 12, 22, 3, 20, 16, 35, 11, 20, 8, 23]
+service_first_40 = [22, 18, 4, 4, 8, 18, 1, 0, 14, 20]
 
 services = [service_first_1, service_first_10, service_first_20, service_first_30, service_first_40]
 
@@ -45,16 +45,17 @@ avg_service_10 = s.mean([service_first_10[0], service_first_10[1], service_first
                          service_first_10[4], service_first_10[5]])
 avg_service_20 = s.mean([service_first_20[0], service_first_20[1], service_first_20[2], service_first_20[3],
                          service_first_20[4], service_first_20[5], service_first_20[6], service_first_20[7],
-                         service_first_20[8], service_first_20[9], service_first_20[10], service_first_20[11]])
+                         service_first_20[8], service_first_20[9]])
 avg_service_30 = s.mean([service_first_30[0], service_first_30[1], service_first_30[2], service_first_30[3],
                          service_first_30[4], service_first_30[5], service_first_30[6], service_first_30[7],
-                         service_first_30[8], service_first_30[9], service_first_30[10], service_first_30[11]])
+                         service_first_30[8], service_first_30[9]])
 avg_service_40 = s.mean([service_first_40[0], service_first_40[1], service_first_40[2], service_first_40[3],
                          service_first_40[4], service_first_40[5], service_first_40[6], service_first_40[7], 
-                         service_first_40[8], service_first_40[9], service_first_40[10], service_first_40[11]])
+                         service_first_40[8], service_first_40[9]])
 
 service_MTD = [0, avg_service_1, avg_service_10, avg_service_20, avg_service_30, avg_service_40]
 
+print(avg_service_30)
 # diff1 = 0
 # diff2 = 1 - avg_service_1
 # diff_3 = 10 - avg_service_10

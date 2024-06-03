@@ -1,0 +1,2 @@
+Scan complete.
+Hosts up: 22

@@ -1,0 +1,7 @@
+# Nmap 7.94SVN scan initiated Wed May 29 14:16:01 2024 as: nmap -T4 -Pn --max-retries 1 --host-timeout 10s --min-rate 1000 -p 1-100 -oN nmap_results/10.1.3.10.txt 10.1.3.10
+Nmap scan report for 10.1.3.10
+Host is up (0.0000050s latency).
+All 100 scanned ports on 10.1.3.10 are in ignored states.
+Not shown: 100 closed tcp ports (reset)
+
+# Nmap done at Wed May 29 14:16:01 2024 -- 1 IP address (1 host up) scanned in 0.09 seconds
