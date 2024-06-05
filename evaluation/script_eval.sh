@@ -66,7 +66,7 @@ do
 
 
     
-    if [ "$i" -ne 11 ]; then
+    if [ "$i" -ne 11]; then
     sleep 180
     fi
 

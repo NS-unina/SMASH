@@ -2,41 +2,25 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import argparse
 import os
-import numpy as np
 
 def main(file_path, prefix):
     # Leggi i dati dal file CSV
     df = pd.read_csv(file_path)
 
+    if prefix == "ResponseTime":
+        df = df.iloc[1:]
+
     # Prendi i nomi delle colonne per le etichette
     x_label = df.columns[0]
     y_label = df.columns[1]
 
-
-
-
-    # Costruisci i nomi delle colonne per la deviazione standard
-    std_dev_col = f'{prefix}_StdDev'
-
-    # Verifica che la colonna di deviazione standard esista
-    if std_dev_col not in df.columns:
-        print(f'Error: The column {std_dev_col} does not exist in the CSV file.')
-        return
-
-    # Ottieni la deviazione standard per ciascun punto
-    std_dev = df[std_dev_col]
-
-    # Crea il grafico
+    # Crea il grafico principale per i dati
     plt.figure(figsize=(10, 6))
-        # Impostazione dei limiti degli assi per allargare la scala
-    #plt.xlim(-0.5, 6.5)  # Allarga la scala dell'asse x
-    plt.ylim(-0.5, 200.5)  # Allarga la scala dell'asse y
     plt.plot(df[x_label], df[y_label], marker='o', linestyle='-', color='b', label=y_label)
 
-    # Aggiunge bande di deviazione standard
-    upper_bound = df[y_label] + std_dev
-    lower_bound = df[y_label] - std_dev
-    plt.fill_between(df[x_label], upper_bound, lower_bound, color='b', alpha=0.1, label='Deviazione standard')
+    # Impostazione dei limiti degli assi per allargare la scala
+    #plt.xlim(1, 7)  # Allarga la scala dell'asse x
+    #plt.ylim(50, 200)  # Allarga la scala dell'asse y
 
     # Aggiunge titolo e etichette
     plt.title(f'{y_label} per {x_label}')
@@ -52,12 +36,29 @@ def main(file_path, prefix):
     # Ottieni la cartella del file CSV
     output_folder = os.path.dirname(file_path)
 
-    # Salva il grafico come immagine nella stessa cartella del file CSV
-    output_filename = os.path.splitext(os.path.basename(file_path))[0] + '_plot.png'
+    # Salva il grafico dei dati come immagine nella stessa cartella del file CSV
+    output_filename = os.path.splitext(os.path.basename(file_path))[0] + '_data_plot.png'
     output_filepath = os.path.join(output_folder, output_filename)
     plt.savefig(output_filepath)
 
-    # Mostra il grafico
+    # Creazione di un secondo grafico per la deviazione standard
+    std_dev_col = f'{prefix}_StdDev'
+    std_dev = df[std_dev_col]
+
+    plt.figure(figsize=(10, 6))
+    plt.bar(df[x_label], std_dev, color='orange', label=f'{prefix} Deviazione standard')
+    plt.title(f'{prefix} Deviazione standard')
+    plt.xlabel('Numero di VM')
+    plt.ylabel('Deviazione standard')
+    plt.xticks(df[x_label])
+    plt.legend()
+
+    # Salva il grafico della deviazione standard come immagine nella stessa cartella del file CSV
+    output_filename = os.path.splitext(os.path.basename(file_path))[0] + '_std_dev_plot.png'
+    output_filepath = os.path.join(output_folder, output_filename)
+    plt.savefig(output_filepath)
+
+    # Mostra entrambi i grafici
     plt.show()
 
 if __name__ == "__main__":
