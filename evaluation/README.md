@@ -29,4 +29,32 @@ This repository contains various tests to evaluate the project's functionalities
         ```sh
         config_string="deploy_honeypot2(config, \"$vm_name\", \"ubuntu/focal64\", \"2048\",\"shared\", 22, \"$free_port\",\"ssh\", \"$tap_name\", \"$mac_tap\", \"$ip_address\", $routes,\"$gateway\")"
         ```
+## Test 2: Container-as-a-service
 
+### Execution
+
+1. Navigate to the `Honey-MTD-2/new_topology/lan1/vagrant/ubuntu` folder:
+    ```sh
+    cd Honey-MTD-2/new_topology/lan1/vagrant/ubuntu
+    ```
+2. Run `vagrant up ti_host1`:
+    ```sh
+    vagrant up ti_host1
+    ```
+3. Access the VM `ti_host1` through the VirtualBox GUI using the credentials `vagrant` / `vagrant`.
+4. In the terminal of the VM, navigate to the `ti_host1/Evaluation` folder:
+    ```sh
+    cd ti_host1/Evaluation
+    ```
+5. Run the `script_eval.sh` script specifying the number of repetitions:
+    ```sh
+    ./script_eval.sh 5
+    ```
+
+### Modifying RAM Parameters for VM Running Containers
+
+1. **Modify `ti_host1/Evaluation/capacity_test_Container.py`**:
+    - Change the directory names at lines 36, 60, 61, and 62 to the new RAM value (e.g., 4096 MB):
+        ```python
+        directory_response_time = "response_time_4096"
+        ```
