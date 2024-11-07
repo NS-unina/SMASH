@@ -26,16 +26,16 @@ create_tap "tap11" "br1_lan1" "11" "13"
 create_tap "tap18" "br1_lan1" "12" "18"
 
 #LAN2
-create_tap "tap21" "br0_lan2" "21" "31"
-create_tap "tap22" "br0_lan2" "21" "32"
-create_tap "tap23" "br0_lan2" "22" "33"
-create_tap "tap26" "br1_lan2" "26" "36"
+#create_tap "tap21" "br0_lan2" "21" "31"
+#create_tap "tap22" "br0_lan2" "21" "32"
+#create_tap "tap23" "br0_lan2" "22" "33"
+#create_tap "tap26" "br1_lan2" "26" "36"
 
 #LAN3
-create_tap "tap31" "br0_lan3" "31" "41"
-create_tap "tap32" "br0_lan3" "31" "42"
-create_tap "tap33" "br0_lan3" "32" "43"
-create_tap "tap36" "br1_lan3" "36" "46"
+#create_tap "tap31" "br0_lan3" "31" "41"
+#create_tap "tap32" "br0_lan3" "31" "42"
+#create_tap "tap33" "br0_lan3" "32" "43"
+#create_tap "tap36" "br1_lan3" "36" "46"
 
 
 # VLAN setup_vlan_interface(vlan_name, ip_address, mac_address)
@@ -50,22 +50,22 @@ create_masquerade_rules "${taps1[@]}" "${vlans1[@]}"
 create_vlan_forward_rules "${vlans1[@]}"
 
 #LAN 2
-setup_vlan_interface "vlan21" "10.2.3.1/24" "8a:ae:02:40:8f:96"
-setup_vlan_interface "vlan22" "10.2.4.1/24" "ea:6a:20:a0:96:15"
-setup_vlan_interface "vlan23" "10.2.5.1/24" "ea:6a:20:a0:96:17"
-setup_vlan_interface "vlan26" "10.2.10.1/24" "ea:6a:20:a0:4f:93"
-setup_vlan_interface "vlan27" "10.2.11.1/24" "ea:6a:20:a0:26:11"
-
-create_masquerade_rules "${taps2[@]}" "${vlans2[@]}"
-create_vlan_forward_rules "${vlans2[@]}"
-
-#LAN 3
-setup_vlan_interface "vlan31" "10.3.3.1/24" "8a:ae:02:40:3f:96"
-setup_vlan_interface "vlan32" "10.3.4.1/24" "ea:6a:20:a0:36:15"
-setup_vlan_interface "vlan33" "10.3.5.1/24" "ea:6a:20:a0:36:17"
-setup_vlan_interface "vlan36" "10.3.10.1/24" "ea:6a:20:a0:3f:93"
-setup_vlan_interface "vlan37" "10.3.11.1/24" "ea:6a:20:a0:36:11"
-
-create_masquerade_rules "${taps3[@]}" "${vlans3[@]}"
-create_vlan_forward_rules "${vlans3[@]}"
+#setup_vlan_interface "vlan21" "10.2.3.1/24" "8a:ae:02:40:8f:96"
+#setup_vlan_interface "vlan22" "10.2.4.1/24" "ea:6a:20:a0:96:15"
+#setup_vlan_interface "vlan23" "10.2.5.1/24" "ea:6a:20:a0:96:17"
+#setup_vlan_interface "vlan26" "10.2.10.1/24" "ea:6a:20:a0:4f:93"
+#setup_vlan_interface "vlan27" "10.2.11.1/24" "ea:6a:20:a0:26:11"
+#
+#create_masquerade_rules "${taps2[@]}" "${vlans2[@]}"
+#create_vlan_forward_rules "${vlans2[@]}"
+#
+##LAN 3
+#setup_vlan_interface "vlan31" "10.3.3.1/24" "8a:ae:02:40:3f:96"
+#setup_vlan_interface "vlan32" "10.3.4.1/24" "ea:6a:20:a0:36:15"
+#setup_vlan_interface "vlan33" "10.3.5.1/24" "ea:6a:20:a0:36:17"
+#setup_vlan_interface "vlan36" "10.3.10.1/24" "ea:6a:20:a0:3f:93"
+#setup_vlan_interface "vlan37" "10.3.11.1/24" "ea:6a:20:a0:36:11"
+#
+#create_masquerade_rules "${taps3[@]}" "${vlans3[@]}"
+#create_vlan_forward_rules "${vlans3[@]}"
 

@@ -119,7 +119,7 @@ class ExampleSwitch13(app_manager.RyuApp):
         dst = eth_pkt.dst
         ip_dst = None
         tcp_ports = ["22","21", "23", "1080"]
-        decoy_ip = ["10.1.3.12", "10.1.3.18", "10.1.10.10" ]
+        decoy_ip = ["10.1.3.12", "10.1.10.10" ]
         trigger_port = ["22,21"]
 
         # get the ipv4 destination address
@@ -160,10 +160,10 @@ class ExampleSwitch13(app_manager.RyuApp):
                 else:
                     for tcp_port in tcp_ports:
                         t.host_redirected.append(src_ip)
-                        self.drop_tcp_srcIP(parser,eth_pkt.src,datapath) 
-                    #spawn(self.redirect_traffic,self,src_ip,tcp_port,source,gw,subnet,br_dpid)
+                        # self.drop_tcp_srcIP(parser,eth_pkt.src,datapath) 
+                        spawn(self.redirect_traffic,self,src_ip,tcp_port,source,gw,subnet,br_dpid)
                         #self.redirect_traffic(self,src_ip,tcp_port,source,gw,subnet,br_dpid)                 
-                        print("REGOLA REDIRECTION INSERITA DIRETTAMENTE DAL CONTROLLER")
+                        print("Redirection rule inserted directly by the controller")
 
         # get the received port number from packet_in message.
         in_port = msg.match['in_port']
@@ -622,24 +622,24 @@ class ExampleSwitch13(app_manager.RyuApp):
 
 
         if decoy_index is None and tcp_port != "23":
-            print("Creazione nuovo honeypot heralding")
+            print("Creating new Heralding honeypot")
             host = t.ti_host1
             self.create_new_honeypot(host)
             decoy_index = u.find_free_honeypot_by_service(man.sb, man.sm, port_index)
         elif decoy_index is None and tcp_port == "23": 
-            print("Creazione nuovo host cowrie")
+            print("Creating new Cowrie honeypot")
             self.create_new_host_cowrie()
             decoy_index = u.find_free_honeypot_by_service(man.sb, man.sm, port_index)
             if(decoy_index) is None:
                 print("Non è stato possibile creare un nuovo honeypot")
                 return
         decoy = f.index_to_decoy_mapping.get (decoy_index,None)
-        print("L'honeypot libero per il servizio ", tcp_port, "è :", decoy.get_name())
+        print("The available honeypot for service ", tcp_port, "is :", decoy.get_name())
 
         destination_port = man.ports[decoy_index][port_index]
         man.sb[decoy_index][port_index] = 1 
         
-        print("Redirection dell'utente: ",src_ip, "del service:", source.get_ip_addr(), "All'honeypot: ", decoy.get_ip_addr(), "da porta: ", tcp_port, "to: ", destination_port)
+        print("User redirection: ",src_ip, "of service:", source.get_ip_addr(), "to honeypot: ", decoy.get_ip_addr(), "from port: ", tcp_port, "to: ", destination_port)
         t.host_redirected.append(src_ip)
         self.redirect_to(br_dpid,src_ip,tcp_port,source,decoy,gw,destination_port)
         self.change_decoy_src(br_dpid, src_ip,subnet,decoy,tcp_port,gw,source,destination_port)
@@ -671,7 +671,7 @@ class ExampleSwitch13(app_manager.RyuApp):
         destination_port = man_dmz.ports[decoy_index][port_index]
         man_dmz.sb[decoy_index][port_index] = 1 
         
-        print("Redirection dell'utente: ",src_ip, "del service:", source.get_ip_addr(), "All'honeypot: ", decoy.get_ip_addr(), "da porta: ", tcp_port, "to: ", destination_port)
+        print("User redirection: ",src_ip, "dof service:", source.get_ip_addr(), "to honeypot: ", decoy.get_ip_addr(), "from port: ", tcp_port, "to: ", destination_port)
         self.redirect_to(br_dpid,src_ip,tcp_port,source,decoy,gw,destination_port)
         self.change_decoy_src(br_dpid, src_ip,subnet,decoy,tcp_port,gw,source,destination_port)
     
@@ -691,8 +691,8 @@ class ExampleSwitch13(app_manager.RyuApp):
         ports_hp[1] = 0
         ports_hp[2] = new_ftp_port
         ports_hp[3] = new_socks_port
-        print("Porte scelte",ports_hp)
-        print("Porte host",man.ports_host1)
+        print("Selected ports",ports_hp)
+        print("Host ports",man.ports_host1)
         f.add_new_honeypot(name,host,s_hp,ports_hp)
 
     def create_new_honeypot_dmz(self,host):

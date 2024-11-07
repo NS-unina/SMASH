@@ -116,7 +116,7 @@ class ExampleSwitch13(app_manager.RyuApp):
         dst = eth_pkt.dst
         ip_dst = None
         tcp_ports = ["22","21", "23", "1080"]
-        decoy_ip = ["10.1.3.12", "10.1.3.13"]
+        decoy_ip = ["10.1.3.12"]
         trigger_port = ["22,21"]
 
         # get the ipv4 destination address

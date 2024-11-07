@@ -53,5 +53,3 @@ plt.xlim(0, 40)
 plt.title("Avg. of Discovered Real Services over Real Services (Honeypot Number = 2)")
 plt.legend()
 plt.show()
-
-

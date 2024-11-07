@@ -2,6 +2,24 @@ version: "3"
 
 services:
 
+    heralding6:
+        build: ./images/heralding_imm
+        container_name: heralding6
+        cap_add:
+        - NET_ADMIN 
+        tty: true
+        stdin_open: true
+        privileged: true
+        volumes:
+        - ./configurations/heralding:/home
+        networks:
+          my_network:
+            ipv4_address: 172.28.0.20
+        ports:
+          - "4000:22"  
+          - "4001:21" 
+          - "4002:1080"
+
     
 
     

@@ -72,7 +72,7 @@ def add_new_honeypot(name,host,s_hp,ports_hp):
     response = requests.post(url, data=payload)
 
     if response.status_code == 200:
-        print("200 OK, Honeypot creato con successo")
+        print("200 OK, Honeypot successfully created")
     else:
         print("Si è verificato un errore durante l'invio della richiesta:", response.status_code)
         print("Messaggio di errore:", response.text)
