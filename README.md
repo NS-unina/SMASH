@@ -1,4 +1,4 @@
-# Honey-MTD-2
+# SMASH
 
 ## Installation
 ### Prerequirements  
